@@ -292,11 +292,13 @@ async function checkedSubtask(cardId, isubtask) {
 async function updateSubtasks(cardId, isubtask, value) {
   let tasksJSON = await loadData('tasks');
   for (let key in tasksJSON) {
-    let task = tasksJSON[key];
-    if (task.cardId == cardId) {
-      task.subtasks[isubtask].checked = value;
-      await patchData(`tasks/${task.cardId}/subtasks/${isubtask}`, {checked : value});
-    }
+      let task = tasksJSON[key];
+      if (task.cardId == cardId) {
+          let subtaskId = task.subtasks[isubtask].id;
+          let patchUrl = `tasks/${task.cardId}/subtasks/${subtaskId}`;       
+          let response = await patchData(patchUrl, { checked: value });
+          console.log(response);
+      }
   }
 }
 

@@ -220,7 +220,7 @@ textarea {
 }
 
 .show {
-  display: flex;
+  display: flex !important; 
 }
 
 .close {

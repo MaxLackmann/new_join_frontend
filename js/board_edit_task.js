@@ -44,10 +44,10 @@ function renderInformation(cardId) {
   document.getElementById('editDescription').value = task.description;
   document.getElementById('editDate').value = task.date;
   editTogglePriority(task.priority);
-  renderEditUsers();
+  renderEditContacts();
   restrictEditPastDate();
   showPickedUsersEmblems(cardId);
-  renderEditSubtask(task.subtask);
+  renderEditSubtask(task.subtasks);
 }
 
 /**
@@ -84,15 +84,15 @@ function editAddSubtask() {
       'Bitte etwas eingeben!';
     return;
   }
-  if (!boardEdit[0].subtask) {
+  if (!boardEdit[0].subtasks) {
     return;
   }
-  if (boardEdit[0].subtask.length < 5) {
+  if (boardEdit[0].subtasks.length < 5) {
     document.getElementById('editSubtaskInput').placeholder = 'Add new Subtask';
     let newSubtask = { subtasktext: input, checked: false };
-    boardEdit[0].subtask.push(newSubtask);
+    boardEdit[0].subtasks.push(newSubtask);
     document.getElementById('editSubtaskInput').value = '';
-    renderEditSubtask(boardEdit[0].subtask);
+    renderEditSubtask(boardEdit[0].subtasks);
     editRemoveSubtask();
   }
 }
@@ -225,13 +225,12 @@ function restrictEditPastDate() {
  * Renders the edit users by appending their HTML representation to the 'editUsers' element.
  * @return {void} This function does not return a value.
  */
-function renderEditUsers() {
+function renderEditContacts() {
   let content = document.getElementById('editUsers');
 
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].userId == 0) continue;
-    const user = users[i];
-    content.innerHTML += renderEditUsersHTML(user, i);
+  for (let i = 0; i < contacts.length; i++) {
+    const contact = contacts[i];
+    content.innerHTML += renderEditContactsHTML(contact, i);
   }
 }
 
@@ -249,12 +248,10 @@ function showPickedUsersEmblems(cardId) {
   let renderedCount = 0;
   let extraCount = 0;
   const task = tasks.find((t) => t.cardId == cardId);
-  if (task && task.userId) {
-    for (let userId of task.userId) {
-      if (userId == 0) continue;
-      let user = users.find((u) => u.userId == userId);
-      if (user && renderedCount < 5) {
-        editUsersEmblem.innerHTML += renderEditEmblemUsers(user);
+  if (task && task.cardId) {
+    for (let contact of task.contacts) {
+      if (contact && contact.checked && renderedCount < 5) {
+        editUsersEmblem.innerHTML += renderEditEmblemContacts(contact);
         renderedCount++;
       } else {
         extraCount++;
@@ -270,7 +267,7 @@ function showPickedUsersEmblems(cardId) {
     }
   }
   checkUserCheckboxesBasedOnEmblems();
-  showEditUsersEmblem();
+  updateContactListSelection();
 }
 
 /**
@@ -283,15 +280,14 @@ function showEditUsersEmblem() {
   usersEmblem.innerHTML = '';
   let renderedCount = 0;
   let extraCount = 0;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].userId == 0) continue;
-    let user = users[i];
+  for (let i = 0; i < contacts.length; i++) {
+    let contact = contacts[i];
     let contactListChecked = document.getElementById('edit-contactlist' + i);
     let checkedContact = document.getElementById(`editCheckbox${i}`);
     if (checkedContact.checked == true) {
       contactListChecked.classList.add('edit-contactlist-selected');
       if (renderedCount < 5) {
-        usersEmblem.innerHTML += renderEditEmblemUsers(user);
+        usersEmblem.innerHTML += renderEditEmblemContacts(contact);
         renderedCount++;
       } else {
         extraCount++;
@@ -303,6 +299,7 @@ function showEditUsersEmblem() {
   if (extraCount > 0) {
     usersEmblem.innerHTML += renderGreyEmblem(extraCount);
   }
+  updateContactListSelection();
 }
 
 /**
@@ -325,6 +322,23 @@ function checkUserCheckboxesBasedOnEmblems() {
 }
 
 /**
+ * Updates the 'edit-contactlist-selected' class for each contact based on their checked state.
+ * @return {void} This function does not return a value.
+ */
+function updateContactListSelection() {
+  for (let i = 0; i < contacts.length; i++) {
+    let contact = contacts[i];
+    let contactListChecked = document.getElementById('edit-contactlist' + i);
+    let checkedContact = document.getElementById(`editCheckbox${i}`);
+    if (checkedContact.checked) {
+      contactListChecked.classList.add('edit-contactlist-selected');
+    } else {
+      contactListChecked.classList.remove('edit-contactlist-selected');
+    }
+  }
+}
+
+/**
  * Edits a task by updating its properties and saving the changes.
  * @param {number} cardId - The ID of the card associated with the task.
  * @param {Event} event - The event object that triggered the function.
@@ -332,18 +346,18 @@ function checkUserCheckboxesBasedOnEmblems() {
  */
 async function editTask(cardId, event) {
   event.preventDefault();
-  let selectedUserIds = getEditSelectedUserIds();
+  let selectedContactIds = getSelectedContactIds();
   event.preventDefault();
   updatedTask = {
     title: document.getElementById('editTitle').value,
     description: document.getElementById('editDescription').value,
-    userId: selectedUserIds,
+    contacts: selectedContactIds,
     date: document.getElementById('editDate').value,
     priority: getEditSelectedPrio(),
     category: boardEdit[0].category,
-    subtask: boardEdit[0].subtask,
+    subtasks: boardEdit[0].subtasks,
     status: boardEdit[0].status,
-    cardId: cardId,
+    // cardId: cardId,
   };
   resetEditUserDisplay();
   await updateEditBoard(cardId, updatedTask);
@@ -363,7 +377,7 @@ async function updateEditBoard(cardId, updatedTask) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == cardId) {
-      await putData(`tasks/${key}/`, updatedTask);
+      await putData(`tasks/${task.cardId}`, updatedTask);
     }
   }
 }
@@ -380,17 +394,23 @@ function resetEditUserDisplay() {
 }
 
 /**
- * Retrieves the IDs of all selected checkboxes in the '.edit-contactlist' element.
+ * Retrieves the IDs of all selected checkboxes in the contact list.
  * @return {Array<string>} An array of selected user IDs.
  */
-function getEditSelectedUserIds() {
+function getSelectedContactIds() {
   let checkboxes = document.querySelectorAll(
-    '.edit-contactlist input[type="checkbox"]:checked'
+    '.contactlist input[type="checkbox"]:checked'
   );
-  let selectedUserIds = [];
+  let selectedContactIds = [];
   for (let checkbox of checkboxes) {
-    let userId = checkbox.getAttribute('data-userid');
-    selectedUserIds.push(userId);
+    let contactId = +checkbox.getAttribute("data-userid");
+    contact = contacts.find((c) => c.id === contactId);
+    if (contact) {
+      contact.checked = true;
+      selectedContactIds.push(contact);
+    } else {
+      console.error(`Kontakt mit ID ${contactId} nicht gefunden.`);
+    }
   }
-  return selectedUserIds;
+  return selectedContactIds;
 }
