@@ -88,7 +88,7 @@ function editAddSubtask() {
   }
   if (boardEdit[0].subtask.length < 5) {
     document.getElementById('editSubtaskInput').placeholder = 'Add new Subtask';
-    let newSubtask = { subtaskText: input, checked: false };
+    let newSubtask = { subtasktext: input, checked: false };
     boardEdit[0].subtask.push(newSubtask);
     document.getElementById('editSubtaskInput').value = '';
     renderEditSubtask(boardEdit[0].subtask);
@@ -108,7 +108,7 @@ function renderEditSubtask(subtasks) {
     return;
   }
   for (let i = 0; i < Math.min(subtasks.length, 5); i++) {
-    editSubtask.innerHTML += renderEditSubtaskHTML(subtasks[i].subtaskText, i);
+    editSubtask.innerHTML += renderEditSubtaskHTML(subtasks[i].subtasktext, i);
   }
 }
 

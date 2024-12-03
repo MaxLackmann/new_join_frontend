@@ -49,7 +49,7 @@ function addSubtask() {
   }
   if (subtaskList.length < 5) {
     document.getElementById('subtaskInput').placeholder = 'Add new Subtask';
-    let newTask = { subtaskText: input, checked: false };
+    let newTask = { subtasktext: input, checked: false };
     subtaskList.push(newTask);
     renderSubtask();
     document.getElementById('subtaskInput').value = '';
@@ -96,6 +96,6 @@ function editSubtask(i) {
  * @return {void} This function does not return a value.
  */
 function checkSubtask(i) {
-  subtaskList[i].subtaskText = document.getElementById(`subtaskList${i}`).value;
+  subtaskList[i].subtasktext = document.getElementById(`subtaskList${i}`).value;
   renderSubtask();
 }

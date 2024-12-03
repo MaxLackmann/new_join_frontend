@@ -3,10 +3,12 @@
  * @return {Promise<void>} A promise that resolves when the board is fully initialized.
  */
 async function initBoard() {
-  includeHTML();
-  await usersArray();
+  // includeHTML();
+  await contactsArray();
   await tasksArray();
   await updateHTML();
+  console.log(tasks);
+  console.log(contacts);
 }
 
 let boardEdit = [];
@@ -170,7 +172,7 @@ async function updateBoard(status) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == currentDraggedElement) {
-      await putData(`tasks/${key}/status`, status);
+      await putData(`tasks/${task.cardId}/status`, status);
     }
   }
 }
@@ -251,7 +253,7 @@ async function deleteTask(cardId) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == cardId) {
-      await deleteData(`tasks/${key}`);
+      await deleteData(`tasks/${task.cardId}`);
     }
   }
 }

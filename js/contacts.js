@@ -7,19 +7,7 @@ async function initContact() {
   await includeHTML();
   await contactsArray();
   renderListContact();
-}
-
-let contacts = [];
-
-/**
- * Asynchronously loads contacts data from the server and populates the contacts array.
- */
-async function contactsArray() {
-  let contactsJson = await loadData('contacts');
-  for (key in contactsJson) {
-    let contact = contactsJson[key];
-    contacts.push(contact);
-  }
+  console.log(contacts);
 }
 
 /**
@@ -29,16 +17,15 @@ async function contactsArray() {
  */
 async function newContact(event) {
   event.preventDefault();
-  let lastContactId = findLastContactId(contacts);
   let nameContact = document.getElementById('nameContact').value;
   let nameContactUpper = nameContact[0].toUpperCase() + nameContact.slice(1);
   let newContact = {
-    contactId: lastContactId + 1,
     name: nameContactUpper,
     email: document.getElementById('emailContact').value,
     phone: document.getElementById('phoneContact').value,
     emblem: renderEmblem(nameContact),
     color: colorRandom(),
+    checked: false,
   };
   contacts.push(newContact);
   await postData('contacts', newContact);
@@ -252,22 +239,6 @@ function closeDialog() {
   let dialog = document.getElementById('dialog');
   dialog.classList.add('d-none');
 }
-
-/**
- * Finds the last contact ID in the given array of contacts.
- * @param {Array} contacts - An array of contact objects.
- * @return {number} The last contact ID found in the array.
- */
-function findLastContactId(contacts) {
-  let lastId = 1;
-  for (let i = 1; i < contacts.length; i++) {
-    if (contacts[i].contactId > lastId) {
-      lastId = contacts[i].contactId;
-    }
-  }
-  return lastId; // found the last contact.id
-}
-
 /**
  * Displays the details of a newly created contact.
  * @param {Object} newContact - The newly created contact object.

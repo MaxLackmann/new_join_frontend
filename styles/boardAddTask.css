@@ -301,6 +301,7 @@ textarea {
 
 .show {
   display: flex;
+  flex-direction: column;
 }
 
 .task-top {

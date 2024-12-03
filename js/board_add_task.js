@@ -6,11 +6,11 @@ let subtaskList = [];
  * @return {type} description of return value
  */
 function showBoardAddTask(boardStatus) {
-  document.getElementById('boardAddTask').classList.remove('dnone');
-  let content = document.getElementById('boardAddTask');
-  content.innerHTML = '';
+  document.getElementById("boardAddTask").classList.remove("dnone");
+  let content = document.getElementById("boardAddTask");
+  content.innerHTML = "";
   content.innerHTML = renderBoardAddTaskHTML(boardStatus);
-  renderUsers();
+  renderContacts();
   renderCategorys();
   restrictPastDate();
 }
@@ -22,16 +22,16 @@ function showBoardAddTask(boardStatus) {
  */
 function resetElements(elements) {
   for (let i = 0; i < elements.length; i++) {
-    elements[i].classList.remove('selected');
-    elements[i].style.backgroundColor = 'white';
-    elements[i].style.color = 'black';
-    let svgPaths = elements[i].querySelectorAll('svg path');
+    elements[i].classList.remove("selected");
+    elements[i].style.backgroundColor = "white";
+    elements[i].style.color = "black";
+    let svgPaths = elements[i].querySelectorAll("svg path");
     if (svgPaths) {
       for (let j = 0; j < svgPaths.length; j++) {
-        if (elements[i].getAttribute('onclick').includes('medium')) {
-          svgPaths[j].style.fill = '#FFA800';
+        if (elements[i].getAttribute("onclick").includes("medium")) {
+          svgPaths[j].style.fill = "#FFA800";
         } else {
-          svgPaths[j].style.fill = svgPaths[j].getAttribute('originalColor');
+          svgPaths[j].style.fill = svgPaths[j].getAttribute("originalColor");
         }
       }
     }
@@ -52,10 +52,10 @@ function setPriorityStyles(
   svgColor
 ) {
   if (selectedElement) {
-    selectedElement.classList.add('selected');
+    selectedElement.classList.add("selected");
     selectedElement.style.backgroundColor = backgroundColor;
     selectedElement.style.color = textColor;
-    let svgPaths = selectedElement.querySelectorAll('svg path');
+    let svgPaths = selectedElement.querySelectorAll("svg path");
     if (svgPaths) {
       for (let j = 0; j < svgPaths.length; j++) {
         svgPaths[j].style.fill = svgColor;
@@ -70,15 +70,15 @@ function setPriorityStyles(
  * @return {void} This function does not return a value.
  */
 function togglePriority(priority) {
-  let elements = document.getElementsByClassName('prioBtn');
+  let elements = document.getElementsByClassName("prioBtn");
   resetElements(elements);
-  let selectedElement = document.getElementById(priority + 'Prio');
-  if (priority === 'urgent') {
-    setPriorityStyles(selectedElement, '#FF3D00', 'white', 'white');
-  } else if (priority === 'medium') {
-    setPriorityStyles(selectedElement, '#FFA800', 'white', 'white');
-  } else if (priority === 'low') {
-    setPriorityStyles(selectedElement, '#7AE229', 'white', 'white');
+  let selectedElement = document.getElementById(priority + "Prio");
+  if (priority === "urgent") {
+    setPriorityStyles(selectedElement, "#FF3D00", "white", "white");
+  } else if (priority === "medium") {
+    setPriorityStyles(selectedElement, "#FFA800", "white", "white");
+  } else if (priority === "low") {
+    setPriorityStyles(selectedElement, "#7AE229", "white", "white");
   }
 }
 
@@ -87,12 +87,12 @@ function togglePriority(priority) {
  * @return {void} This function does not return anything.
  */
 window.onload = function () {
-  let elements = document.getElementsByClassName('prioBtn');
+  let elements = document.getElementsByClassName("prioBtn");
   for (let i = 0; i < elements.length; i++) {
-    let svgPaths = elements[i].querySelectorAll('svg path');
+    let svgPaths = elements[i].querySelectorAll("svg path");
     if (svgPaths) {
       for (let j = 0; j < svgPaths.length; j++) {
-        svgPaths[j].setAttribute('originalColor', svgPaths[j].style.fill);
+        svgPaths[j].setAttribute("originalColor", svgPaths[j].style.fill);
       }
     }
   }
@@ -102,12 +102,11 @@ window.onload = function () {
  * Renders the list of users by appending their HTML representation to the 'users' element.
  * @return {void} This function does not return a value.
  */
-function renderUsers() {
-  let content = document.getElementById('users');
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].userId == 0) continue;
-    const user = users[i];
-    content.innerHTML += renderUsersHTML(user, i);
+function renderContacts() {
+  let content = document.getElementById("users");
+  for (let i = 0; i < contacts.length; i++) {
+    const contact = contacts[i];
+    content.innerHTML += renderContactsHTML(contact, i);
   }
 }
 
@@ -116,7 +115,7 @@ function renderUsers() {
  * @return {void} This function does not return a value.
  */
 function renderCategorys() {
-  let task = document.getElementById('boardTasks');
+  let task = document.getElementById("boardTasks");
 
   for (let i = 0; i < categorys.length; i++) {
     task.innerHTML += renderCategorysHTML(i);
@@ -130,14 +129,14 @@ function renderCategorys() {
 function showCategories() {
   event.stopPropagation();
   resetCategoryErrorMessage();
-  if (document.getElementById('boardTasks').classList.contains('show')) {
-    document.getElementById('boardTasks').classList.remove('show');
-    document.getElementById('arrowDownCategory').style.display = 'block';
-    document.getElementById('arrowUpCategory').style.display = 'none';
+  if (document.getElementById("boardTasks").classList.contains("show")) {
+    document.getElementById("boardTasks").classList.remove("show");
+    document.getElementById("arrowDownCategory").style.display = "block";
+    document.getElementById("arrowUpCategory").style.display = "none";
   } else {
-    document.getElementById('boardTasks').classList.add('show');
-    document.getElementById('arrowDownCategory').style.display = 'none';
-    document.getElementById('arrowUpCategory').style.display = 'block';
+    document.getElementById("boardTasks").classList.add("show");
+    document.getElementById("arrowDownCategory").style.display = "none";
+    document.getElementById("arrowUpCategory").style.display = "block";
   }
 }
 
@@ -150,7 +149,7 @@ function showCategories() {
 function selectCategory(event, index) {
   event.stopPropagation();
   let selectedCategory = categorys[index];
-  document.getElementById('selectedCategory').innerHTML = selectedCategory;
+  document.getElementById("selectedCategory").innerHTML = selectedCategory;
   showCategories();
 }
 
@@ -159,7 +158,7 @@ function selectCategory(event, index) {
  * @return {void} This function does not return anything.
  */
 function resetCategoryErrorMessage() {
-  document.getElementById('categoryErrorMessage').innerHTML = '';
+  document.getElementById("categoryErrorMessage").innerHTML = "";
 }
 
 /**
@@ -167,9 +166,9 @@ function resetCategoryErrorMessage() {
  * @return {void} This function does not return anything.
  */
 function restrictPastDate() {
-  let dateInput = document.getElementById('date');
-  let today = new Date().toISOString().split('T')[0];
-  dateInput.setAttribute('min', today);
+  let dateInput = document.getElementById("date");
+  let today = new Date().toISOString().split("T")[0];
+  dateInput.setAttribute("min", today);
 }
 
 /**
@@ -177,17 +176,16 @@ function restrictPastDate() {
  * @return {void} This function does not return a value.
  */
 function showUsersEmblem() {
-  let usersEmblem = document.getElementById('usersEmblem');
-  usersEmblem.innerHTML = '';
+  let usersEmblem = document.getElementById("usersEmblem");
+  usersEmblem.innerHTML = "";
   let renderedCount = 0;
   let extraCount = 0;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].userId == 0) continue;
-    let contact = users[i];
-    let contactListChecked = document.getElementById('contactList' + i);
+  for (let i = 0; i < contacts.length; i++) {
+    let contact = contacts[i];
+    let contactListChecked = document.getElementById("contactList" + i);
     let checkedContact = document.getElementById(`checkbox${i}`);
     if (checkedContact.checked == true) {
-      contactListChecked.classList.add('contactlist-selected');
+      contactListChecked.classList.add("contactlist-selected");
       if (renderedCount < 5) {
         usersEmblem.innerHTML += renderEmblemUsers(contact);
         renderedCount++;
@@ -195,7 +193,7 @@ function showUsersEmblem() {
         extraCount++;
       }
     } else {
-      contactListChecked.classList.remove('contactlist-selected');
+      contactListChecked.classList.remove("contactlist-selected");
     }
   }
   if (extraCount > 0) {
@@ -210,14 +208,14 @@ function showUsersEmblem() {
  */
 function showUsers() {
   event.stopPropagation();
-  if (document.getElementById('users').classList.contains('show')) {
-    document.getElementById('users').classList.remove('show');
-    document.getElementById('arrowDownUser').style.display = 'block';
-    document.getElementById('arrowUpUser').style.display = 'none';
+  if (document.getElementById("users").classList.contains("show")) {
+    document.getElementById("users").classList.remove("show");
+    document.getElementById("arrowDownUser").style.display = "block";
+    document.getElementById("arrowUpUser").style.display = "none";
   } else {
-    document.getElementById('users').classList.add('show');
-    document.getElementById('arrowDownUser').style.display = 'none';
-    document.getElementById('arrowUpUser').style.display = 'block';
+    document.getElementById("users").classList.add("show");
+    document.getElementById("arrowDownUser").style.display = "none";
+    document.getElementById("arrowUpUser").style.display = "block";
   }
 }
 
@@ -226,8 +224,8 @@ function showUsers() {
  * @return {void} This function does not return a value.
  */
 function renderSubtask() {
-  let subtask = document.getElementById('subtask');
-  subtask.innerHTML = '';
+  let subtask = document.getElementById("subtask");
+  subtask.innerHTML = "";
   for (let i = 0; i < Math.min(subtaskList.length, 5); i++) {
     subtask.innerHTML += renderSubtaskHTML(i);
   }
@@ -238,14 +236,14 @@ function renderSubtask() {
  * @return {string} The selected priority ('urgent', 'low', or 'medium').
  */
 function getSelectedPrio() {
-  let urgentBtn = document.getElementById('urgentPrio');
-  let lowprioBtn = document.getElementById('lowPrio');
-  if (urgentBtn.classList.contains('selected')) {
-    return 'urgent';
-  } else if (lowprioBtn.classList.contains('selected')) {
-    return 'low';
+  let urgentBtn = document.getElementById("urgentPrio");
+  let lowprioBtn = document.getElementById("lowPrio");
+  if (urgentBtn.classList.contains("selected")) {
+    return "urgent";
+  } else if (lowprioBtn.classList.contains("selected")) {
+    return "low";
   } else {
-    return 'medium';
+    return "medium";
   }
 }
 
@@ -253,31 +251,22 @@ function getSelectedPrio() {
  * Retrieves the IDs of all selected checkboxes in the contact list.
  * @return {Array<string>} An array of selected user IDs.
  */
-function getSelectedUserIds() {
+function getSelectedContactIds() {
   let checkboxes = document.querySelectorAll(
     '.contactlist input[type="checkbox"]:checked'
   );
-  let selectedUserIds = [];
+  let selectedContactIds = [];
   for (let checkbox of checkboxes) {
-    let userId = checkbox.getAttribute('data-userid');
-    selectedUserIds.push(userId);
-  }
-  return selectedUserIds;
-}
-
-/**
- * Calculates the highest card ID from the given tasks array.
- * @param {Array<Object>} tasks - An array of tasks containing card IDs.
- * @return {number} The highest card ID found in the tasks array.
- */
-function createCardId(tasks) {
-  let lastCardId = -1;
-  for (let i = 0; i < tasks.length; i++) {
-    if (tasks[i].cardId > lastCardId) {
-      lastCardId = tasks[i].cardId;
+    let contactId = +checkbox.getAttribute("data-userid");
+    contact = contacts.find((c) => c.id === contactId);
+    if (contact) {
+      contact.checked = true;
+      selectedContactIds.push(contact);
+    } else {
+      console.error(`Kontakt mit ID ${contactId} nicht gefunden.`);
     }
   }
-  return lastCardId; //
+  return selectedContactIds;
 }
 
 /**
@@ -288,38 +277,37 @@ function createCardId(tasks) {
  */
 async function createNewTaskBoard(boardStatus, event) {
   event.preventDefault();
-  let selectedCategory = document.getElementById('selectedCategory').innerHTML;
+  let selectedCategory = document.getElementById("selectedCategory").innerHTML;
   let spanContactContainer = document.getElementById(
-    'selectedCategoryContainer'
+    "selectedCategoryContainer"
   );
-  let categoryErrorMessage = document.getElementById('categoryErrorMessage');
+  let categoryErrorMessage = document.getElementById("categoryErrorMessage");
   if (
-    selectedCategory === 'Select task category' ||
-    selectedCategory.trim() === ''
+    selectedCategory === "Select task category" ||
+    selectedCategory.trim() === ""
   ) {
-    spanContactContainer.style.border = '1px solid red';
-    categoryErrorMessage.style.color = 'red';
-    categoryErrorMessage.style.display = 'flex';
-    categoryErrorMessage.innerHTML = 'Please select a category';
+    spanContactContainer.style.border = "1px solid red";
+    categoryErrorMessage.style.color = "red";
+    categoryErrorMessage.style.display = "flex";
+    categoryErrorMessage.innerHTML = "Please select a category";
     return;
   }
-  let lastCardId = createCardId(tasks);
-  let selectedUserIds = getSelectedUserIds();
+  let selectedContactIds = getSelectedContactIds();
   let task = {
-    title: document.getElementById('title').value,
-    description: document.getElementById('description').value,
-    userId: selectedUserIds,
-    date: document.getElementById('date').value,
+    title: document.getElementById("title").value,
+    description: document.getElementById("description").value,
+    contacts: selectedContactIds,
+    date: document.getElementById("date").value,
     priority: getSelectedPrio(),
     category: selectedCategory,
-    subtask: subtaskList,
-    status: boardStatus,
-    cardId: lastCardId + 1,
+    subtasks: subtaskList,
+    status: boardStatus
   };
+  console.log(task);
   taskAddedToBoard();
   setTimeout(async function () {
     resetUserDisplay();
-    await postData('tasks', task);
+    await postData("tasks", task);
     clearAllTasks(event);
     closeAddTaskBoard();
     updateHTML();
@@ -331,13 +319,13 @@ async function createNewTaskBoard(boardStatus, event) {
  */
 function resetCategoryErrorMessage() {
   let spanContactContainer = document.getElementById(
-    'selectedCategoryContainer'
+    "selectedCategoryContainer"
   );
-  let categoryErrorMessage = document.getElementById('categoryErrorMessage');
-  spanContactContainer.style.border = '';
-  categoryErrorMessage.style.display = 'none';
-  categoryErrorMessage.style.color = '';
-  categoryErrorMessage.innerHTML = '';
+  let categoryErrorMessage = document.getElementById("categoryErrorMessage");
+  spanContactContainer.style.border = "";
+  categoryErrorMessage.style.display = "none";
+  categoryErrorMessage.style.color = "";
+  categoryErrorMessage.innerHTML = "";
 }
 
 /**
@@ -349,8 +337,8 @@ function resetCategoryErrorMessage() {
  */
 function clearAllTasks(event) {
   event.preventDefault();
-  document.getElementById('title').value = '';
-  document.getElementById('description').value = '';
+  document.getElementById("title").value = "";
+  document.getElementById("description").value = "";
   clearAllCheckbox();
   showUsersEmblem();
   clearDateAndPriority();
@@ -367,9 +355,9 @@ function clearAllTasks(event) {
  * @return {void} This function does not return a value.
  */
 function taskAddedToBoard() {
-  document.getElementById('taskAddedToBoard').classList.remove('dnone');
+  document.getElementById("taskAddedToBoard").classList.remove("dnone");
   setTimeout(function () {
-    document.getElementById('taskAddedToBoard').classList.add('dnone');
+    document.getElementById("taskAddedToBoard").classList.add("dnone");
   }, 3000);
 }
 
@@ -378,9 +366,9 @@ function taskAddedToBoard() {
  * @return {void} This function does not return a value.
  */
 function boardAddTaskAnimation() {
-  let addTaskContainer = document.getElementById('addTaskMainContainer');
-  addTaskContainer.classList.remove('move-right');
-  addTaskContainer.classList.add('move-left');
+  let addTaskContainer = document.getElementById("addTaskMainContainer");
+  addTaskContainer.classList.remove("move-right");
+  addTaskContainer.classList.add("move-left");
 }
 
 /**
@@ -388,7 +376,7 @@ function boardAddTaskAnimation() {
  * @return {void} This function does not return a value.
  */
 function closeBoardAddTaskAnimation() {
-  let addTaskContainer = document.getElementById('addTaskMainContainer');
-  addTaskContainer.classList.add('move-right');
-  addTaskContainer.classList.remove('move-left');
+  let addTaskContainer = document.getElementById("addTaskMainContainer");
+  addTaskContainer.classList.add("move-right");
+  addTaskContainer.classList.remove("move-left");
 }

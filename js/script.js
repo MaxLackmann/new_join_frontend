@@ -19,6 +19,7 @@ let colors = [
 let categorys = ['Technical Task', 'User Story', 'Development', 'Editing'];
 let users = [];
 let tasks = [];
+let contacts = [];
 let isTasksArrayLoading = false;
 
 /**
@@ -42,6 +43,17 @@ async function tasksArray() {
     }
   } finally {
     isTasksArrayLoading = false;
+  }
+}
+
+/**
+ * Asynchronously loads contacts data from the server and populates the contacts array.
+ */
+async function contactsArray() {
+  let contactsJson = await loadData('contacts');
+  for (key in contactsJson) {
+    let contact = contactsJson[key];
+    contacts.push(contact);
   }
 }
 

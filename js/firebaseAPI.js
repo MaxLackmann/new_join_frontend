@@ -1,14 +1,13 @@
-const BASE_URL =
-  'https://join-179-default-rtdb.europe-west1.firebasedatabase.app/';
+const BASE_URL = "http://127.0.0.1:8000/api/";
 
 /**
  * Asynchronously loads data from a specified path using the Firebase Realtime Database API.
  * @param {string} [path=''] - The path to the data in the Firebase Realtime Database. Defaults to an empty string.
  * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
  */
-async function loadData(path = '') {
-  let response = await fetch(BASE_URL + path + '.json');
-  return (responseToJson = await response.json());
+async function loadData(path = "") {
+  let response = await fetch(BASE_URL + path + "/");
+  return await response.json();
 }
 
 /**
@@ -17,16 +16,16 @@ async function loadData(path = '') {
  * @param {Object} [data={}] - The data to be posted. Defaults to an empty object.
  * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
  */
-async function postData(path = '', data = {}) {
-  const id = data.id;
-  let response = await fetch(BASE_URL + path + '.json', {
-    method: 'POST',
-    header: {
-      'Content-Type': 'application/json',
+async function postData(path = "", data = {}) {
+  let response = await fetch(BASE_URL + path + "/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  return (responseToJson = await response.json());
+  console.log("direction to", BASE_URL + path + "/");
+  return await response.json();
 }
 
 /**
@@ -34,11 +33,18 @@ async function postData(path = '', data = {}) {
  * @param {string} path - the path to the data to be deleted
  * @return {Promise} a Promise that resolves to the JSON response from the server
  */
-async function deleteData(path = '') {
-  let response = await fetch(BASE_URL + path + '.json', {
-    method: 'DELETE',
+async function deleteData(path = "") {
+  let response = await fetch(BASE_URL + path + "/", {
+    method: "DELETE"
   });
-  return (responseToJson = await response.json());
+  if (response.status === 204) {
+    return;
+  }
+  if (!response.ok) {
+    throw new Error(
+      `Fehler beim Löschen: ${response.status} ${response.statusText}`
+    );
+  }
 }
 
 /**
@@ -47,15 +53,15 @@ async function deleteData(path = '') {
  * @param {Object} [data={}] - The data to be updated. Defaults to an empty object.
  * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
  */
-async function putData(path = '', data = {}) {
-  let response = await fetch(BASE_URL + path + '.json', {
-    method: 'PUT',
+async function putData(path = "", data = {}) {
+  let response = await fetch(BASE_URL + path + "/", {
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  return (responseToJson = await response.json());
+  return await response.json();
 }
 
 /**
@@ -64,13 +70,14 @@ async function putData(path = '', data = {}) {
  * @param {Object} [data={}] - The data to be updated. Defaults to an empty object.
  * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
  */
-async function putData(path = '', data = {}) {
-  let response = await fetch(BASE_URL + path + '.json', {
-    method: 'PUT',
-    header: {
-      'Content-Type': 'application/json',
+async function putData(path = "", data = {}) {
+  let response = await fetch(BASE_URL + path + "/", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  return (responseToJson = await response.json());
+  console.log("direction to", BASE_URL + path + "/");
+  return await response.json();
 }

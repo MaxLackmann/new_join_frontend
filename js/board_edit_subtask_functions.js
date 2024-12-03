@@ -88,7 +88,7 @@ function editDeleteSubtask(i) {
  */
 function editCheckSubtask(i) {
   document.getElementById(`editSubtaskList${i}`).readOnly = true;
-  boardEdit[0].subtask[i].subtaskText = document.getElementById(
+  boardEdit[0].subtask[i].subtasktext = document.getElementById(
     `editSubtaskList${i}`
   ).value;
   edit = document.getElementById(`edit-images${i}`);

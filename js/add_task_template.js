@@ -82,7 +82,7 @@ function renderSubtaskHTML(i) {
                 readonly
                 type="text"
                 id="subtaskList${i}"
-                value="${subtaskList[i].subtaskText}"
+                value="${subtaskList[i].subtasktext}"
                 />
                 <div class="edit-images" id="edit-images${i}">
                   <img onclick="editSubtask(${i})" id="editSubtask${i}" src="../assets/icons/edit_contacts_icon.svg" alt="">
