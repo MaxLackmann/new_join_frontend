@@ -16,11 +16,12 @@ function editTaskOfBoard(cardId) {
     priority: task.priority,
     status: task.status,
     title: task.title,
-    subtask: task.subtask,
+    subtask: task.subtasks,
   };
   boardEdit.push(information);
   document.getElementById('showBigCard').innerHTML = boardAddTaskEdit(cardId);
   renderInformation(cardId);
+  console.log(boardEdit);
 }
 
 /**

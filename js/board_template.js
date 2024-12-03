@@ -101,10 +101,10 @@ function renderGreyEmblem(remainingCount) {
  * @param {Object} user - The user object containing the user's color and emblem.
  * @return {string} The HTML string representing the small user emblem.
  */
-function renderSmallUsersEmblem(user) {
+function renderSmallUsersEmblem(contact) {
   return /*html*/ `
-        <div class="small-useremblem" style="background-color: ${user.color}" id="${user.userId}">
-        ${user.emblem}
+        <div class="small-useremblem" style="background-color: ${contact.color}" id="${contact.id}">
+        ${contact.emblem}
       </div>  `;
 }
 
@@ -173,13 +173,13 @@ function renderBigCardHTML(cardId) {
  * @param {Object} user - The user object containing user information.
  * @return {string} The HTML content displaying the user's emblem and name.
  */
-function renderBigEmblemUsers(user) {
+function renderBigEmblemUsers(contact) {
   return /*html*/ `
     <div class="big-single-user">
-        <div class="big-useremblem" style="background-color: ${user.color}" id="${user.userId}">
-          ${user.emblem}
+        <div class="big-useremblem" style="background-color: ${contact.color}" id="${contact.id}">
+          ${contact.emblem}
         </div>  
-        <span>${user.name}</span>
+        <span>${contact.name}</span>
       </div>`;
 }
 
@@ -194,9 +194,8 @@ function renderBigSubtasksHTML(cardId, subtask, j) {
   return /*html*/ `
         <label for="checkbox${j}">
             <li class="big-subtasklist">
-                <input class="big-card-checkbox" onclick="checkedSubtask(${cardId}, ${j})" type="checkbox"  ${
-    subtask.checked ? 'checked' : ''
-  } id="checkbox${j}" data-userid="${j}">
+                <input class="big-card-checkbox" onclick="checkedSubtask(${cardId}, ${j})" type="checkbox"  
+                ${subtask.checked ? "checked" : ""} id="checkbox${j}" data-userid="${j}">
                 <div class="contactname">${subtask.subtasktext}</div>
             </li>
         </label>`;

@@ -81,3 +81,22 @@ async function putData(path = "", data = {}) {
   console.log("direction to", BASE_URL + path + "/");
   return await response.json();
 }
+
+/**
+ * Partially updates data at the specified path using the Firebase Realtime Database API.
+ * @param {string} [path=''] - The path to the data in the Firebase Realtime Database. Defaults to an empty string.
+ * @param {Object} [data={}] - The data to be partially updated. Defaults to an empty object.
+ * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
+ */
+async function patchData(path = "", data = {}) {
+  let response = await fetch(BASE_URL + path + "/", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  console.log("direction to", BASE_URL + path + "/");
+  return await response.json();
+}
+

@@ -16,13 +16,11 @@ async function showBigUsersEmblem(cardId) {
   let bigUsersEmblem = document.getElementById('bigUsersEmblem');
   bigUsersEmblem.innerHTML = '';
 
-  const task = tasks.find((t) => t.cardId == cardId);
-  if (task && task.userId) {
-    for (let userId of task.userId) {
-      if (userId == 0) continue; // Skip if userId is 0
-      let user = users.find((u) => u.userId == userId);
-      if (user) {
-        bigUsersEmblem.innerHTML += renderBigEmblemUsers(user);
+  const task = tasks.find((t) => t.cardId === cardId);
+  if (task && task.cardId) {
+    if (task.contacts && task.contacts.length > 0) {
+      for (let contact of task.contacts) {
+          bigUsersEmblem.innerHTML += renderBigEmblemUsers(contact);
       }
     }
   }
@@ -36,10 +34,10 @@ async function showBigUsersEmblem(cardId) {
 async function renderBigSubtasks(cardId) {
   let bigSubtask = document.getElementById('bigSubtasks');
   bigSubtask.innerHTML = ''; // Clear existing subtasks
-  const task = tasks.find((t) => t.cardId == cardId);
-  if (task && task.subtask) {
-    for (let j = 0; j < task.subtask.length; j++) {
-      const subtask = task.subtask[j];
+  const task = tasks.find((t) => t.cardId === cardId);
+  if (task && task.subtasks) {
+    for (let j = 0; j < task.subtasks.length; j++) {
+      const subtask = task.subtasks[j];
       bigSubtask.innerHTML += renderBigSubtasksHTML(cardId, subtask, j); // Append each subtask's HTML to the string
     }
   }

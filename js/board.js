@@ -93,20 +93,15 @@ function renderUserEmblems(task, container) {
   let renderedCount = 0;
   let extraCount = 0;
 
-  if (task.userId && task.userId.length > 0) {
-    for (let userId of task.userId) {
-      if (userId == 0) continue;
-
-      let user = users.find((u) => u.userId == userId);
-      if (user) {
+  if (task.contacts && task.contacts.length > 0) {
+    for (let contact of task.contacts) {
         if (renderedCount < 5) {
-          container.innerHTML += renderSmallUsersEmblem(user);
+          container.innerHTML += renderSmallUsersEmblem(contact);
           renderedCount++;
         } else {
           extraCount++;
         }
       }
-    }
   }
   return { renderedCount, extraCount };
 }
@@ -172,7 +167,8 @@ async function updateBoard(status) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == currentDraggedElement) {
-      await putData(`tasks/${task.cardId}/status`, status);
+      await patchData(`tasks/${task.cardId}`, { status: status });
+      console.log('updated');
     }
   }
 }
@@ -298,7 +294,8 @@ async function updateSubtasks(cardId, isubtask, value) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == cardId) {
-      await putData(`tasks/${key}/subtask/${isubtask}/checked`, value);
+      task.subtasks[isubtask].checked = value;
+      await patchData(`tasks/${task.cardId}/subtasks/${isubtask}`, {checked : value});
     }
   }
 }
@@ -311,7 +308,7 @@ async function updateSubtasks(cardId, isubtask, value) {
  */
 function renderProgressBar(cardId, tasks) {
   const task = tasks.find((t) => t.cardId == cardId);
-  let subtasks = task.subtask;
+  let subtasks = task.subtasks;
   updateProgressBarDisplay(cardId, subtasks);
 }
 
