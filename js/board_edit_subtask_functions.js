@@ -7,10 +7,10 @@
  * @return {void}
  */
 function editChangeButtonsSubtask() {
-  if (!Array.isArray(boardEdit[0].subtask)) {
-    boardEdit[0].subtask = [];
+  if (!Array.isArray(boardEdit[0].subtasks)) {
+    boardEdit[0].subtasks = [];
   }
-  if (boardEdit[0].subtask.length < 5) {
+  if (boardEdit[0].subtasks.length < 5) {
     document.getElementById('editSubtaskRightRegular').classList.add('dnone');
     document.getElementById('editSubtaskRightAdd').classList.remove('dnone');
   } else {
@@ -72,8 +72,8 @@ function editThisSubtask(i) {
  * @return {void} This function does not return anything.
  */
 function editDeleteSubtask(i) {
-  boardEdit[0].subtask.splice(i, 1);
-  renderEditSubtask(boardEdit[0].subtask);
+  boardEdit[0].subtasks.splice(i, 1);
+  renderEditSubtask(boardEdit[0].subtasks);
   document.getElementById('editSubtaskInput').value = '';
   document.getElementById('editSubtaskInput').readOnly = false;
   document.getElementById('editSubtaskInput').style = 'color:black;';
@@ -88,7 +88,7 @@ function editDeleteSubtask(i) {
  */
 function editCheckSubtask(i) {
   document.getElementById(`editSubtaskList${i}`).readOnly = true;
-  boardEdit[0].subtask[i].subtasktext = document.getElementById(
+  boardEdit[0].subtasks[i].subtasktext = document.getElementById(
     `editSubtaskList${i}`
   ).value;
   edit = document.getElementById(`edit-images${i}`);

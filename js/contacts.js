@@ -30,6 +30,7 @@ async function newContact(event) {
   contacts.push(newContact);
   await postData('contacts', newContact);
   showNewContactDetails(newContact);
+  console.log(newContact);
 }
 
 /**
@@ -83,7 +84,8 @@ async function firebaseUpdate(contactEdit) {
   for (key in contactsJson) {
     let contactDB = contactsJson[key];
     if (contactDB.contactId == contactEdit.contactId) {
-      putData('contacts/' + [key], contactEdit);
+      contactId = contactDB.id;
+      patchData(`contacts/${contactId}`, contactEdit);
     }
   }
 }
@@ -99,7 +101,8 @@ async function firebaseDelete(contactDelete) {
   for (key in contactsJson) {
     let contactDB = contactsJson[key];
     if (contactDB.contactId == contactDelete.contactId) {
-      deleteData('contacts/' + [key]);
+      contactId = contactDB.id;
+      deleteData(`contacts/${contactId}`);
     }
   }
 }

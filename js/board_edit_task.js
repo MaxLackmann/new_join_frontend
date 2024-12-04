@@ -12,11 +12,12 @@ function editTaskOfBoard(cardId) {
     cardId: cardId,
     category: task.category,
     date: task.date,
+    contacts: task.contacts,
     description: task.description,
     priority: task.priority,
     status: task.status,
     title: task.title,
-    subtask: task.subtasks,
+    subtasks: task.subtasks,
   };
   boardEdit.push(information);
   document.getElementById('showBigCard').innerHTML = boardAddTaskEdit(cardId);
@@ -360,6 +361,7 @@ async function editTask(cardId, event) {
     // cardId: cardId,
   };
   resetEditUserDisplay();
+  console.log('Payload:', updatedTask);
   await updateEditBoard(cardId, updatedTask);
   await updateHTML();
   closeEditBoard();
@@ -377,7 +379,7 @@ async function updateEditBoard(cardId, updatedTask) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == cardId) {
-      await putData(`tasks/${task.cardId}`, updatedTask);
+      await patchData(`tasks/${task.cardId}`, updatedTask);
     }
   }
 }
@@ -399,7 +401,7 @@ function resetEditUserDisplay() {
  */
 function getSelectedContactIds() {
   let checkboxes = document.querySelectorAll(
-    '.contactlist input[type="checkbox"]:checked'
+    '.edit-contactlist input[type="checkbox"]:checked'
   );
   let selectedContactIds = [];
   for (let checkbox of checkboxes) {
