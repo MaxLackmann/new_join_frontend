@@ -3,7 +3,7 @@
  * @return {Promise<void>} A promise that resolves when the board is fully initialized.
  */
 async function initBoard() {
-  // includeHTML();
+  includeHTML();
   await contactsArray();
   await tasksArray();
   await updateHTML();
