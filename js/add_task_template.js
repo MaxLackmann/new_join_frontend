@@ -3,7 +3,7 @@
  *
  * @return {void} This function does not return a value.
  */
-function renderUsersHTML(contact, i) {
+function renderContactsHTML(contact, i) {
   return /*html*/ `
         <label for="checkbox${i}">
             <li class="contact-list" id="contactList${i}">        
@@ -11,7 +11,7 @@ function renderUsersHTML(contact, i) {
                   ${contact.emblem}
                 </div> 
                 <div class="contact-name" >${contact.name}</div> 
-                <input class="user-checkbox" onclick="showUsersEmblem()" type="checkbox" id="checkbox${i}" data-userid="${contact.userId}">          
+                <input class="user-checkbox" onclick="showUsersEmblem()" type="checkbox" id="checkbox${i}" data-userid="${contact.id}">          
             </li>
         </label> `;
 }

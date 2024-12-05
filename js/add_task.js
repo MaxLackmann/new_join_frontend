@@ -11,9 +11,9 @@
 async function initAdd() {
   restrictPastDate();
   includeHTML();
-  await usersArray();
+  await contactsArray();
   await tasksArray();
-  renderUsers();
+  renderContacts();
   renderCategorys();
 }
 
@@ -27,16 +27,16 @@ let subtaskList = [];
  */
 function resetElements(elements) {
   for (let i = 0; i < elements.length; i++) {
-    elements[i].classList.remove('selected');
-    elements[i].style.backgroundColor = 'white';
-    elements[i].style.color = 'black';
-    let svgPaths = elements[i].querySelectorAll('svg path');
+    elements[i].classList.remove("selected");
+    elements[i].style.backgroundColor = "white";
+    elements[i].style.color = "black";
+    let svgPaths = elements[i].querySelectorAll("svg path");
     if (svgPaths) {
       for (let j = 0; j < svgPaths.length; j++) {
-        if (elements[i].getAttribute('onclick').includes('medium')) {
-          svgPaths[j].style.fill = '#FFA800';
+        if (elements[i].getAttribute("onclick").includes("medium")) {
+          svgPaths[j].style.fill = "#FFA800";
         } else {
-          svgPaths[j].style.fill = svgPaths[j].getAttribute('originalColor');
+          svgPaths[j].style.fill = svgPaths[j].getAttribute("originalColor");
         }
       }
     }
@@ -57,10 +57,10 @@ function setPriorityStyles(
   svgColor
 ) {
   if (selectedElement) {
-    selectedElement.classList.add('selected');
+    selectedElement.classList.add("selected");
     selectedElement.style.backgroundColor = backgroundColor;
     selectedElement.style.color = textColor;
-    let svgPaths = selectedElement.querySelectorAll('svg path');
+    let svgPaths = selectedElement.querySelectorAll("svg path");
     if (svgPaths) {
       for (let j = 0; j < svgPaths.length; j++) {
         svgPaths[j].style.fill = svgColor;
@@ -75,15 +75,15 @@ function setPriorityStyles(
  * @return {void} This function does not return a value.
  */
 function togglePriority(priority) {
-  let elements = document.getElementsByClassName('prio-button');
+  let elements = document.getElementsByClassName("prio-button");
   resetElements(elements);
   let selectedElement = document.querySelector("[onclick*='" + priority + "']");
-  if (priority === 'urgent') {
-    setPriorityStyles(selectedElement, '#FF3D00', 'white', 'white');
-  } else if (priority === 'medium') {
-    setPriorityStyles(selectedElement, '#FFA800', 'white', 'white');
-  } else if (priority === 'low') {
-    setPriorityStyles(selectedElement, '#7AE229', 'white', 'white');
+  if (priority === "urgent") {
+    setPriorityStyles(selectedElement, "#FF3D00", "white", "white");
+  } else if (priority === "medium") {
+    setPriorityStyles(selectedElement, "#FFA800", "white", "white");
+  } else if (priority === "low") {
+    setPriorityStyles(selectedElement, "#7AE229", "white", "white");
   }
 }
 
@@ -92,51 +92,49 @@ function togglePriority(priority) {
  * @return {void} This function does not return anything.
  */
 window.onload = function () {
-  let elements = document.getElementsByClassName('prio-button');
+  let elements = document.getElementsByClassName("prio-button");
   for (let i = 0; i < elements.length; i++) {
-    let svgPaths = elements[i].querySelectorAll('svg path');
+    let svgPaths = elements[i].querySelectorAll("svg path");
     if (svgPaths) {
       for (let j = 0; j < svgPaths.length; j++) {
-        svgPaths[j].setAttribute('originalColor', svgPaths[j].style.fill);
+        svgPaths[j].setAttribute("originalColor", svgPaths[j].style.fill);
       }
     }
   }
 };
 
 /**
- * Renders users based on the users array.
+ * Renders the list of users by appending their HTML representation to the 'users' element.
  * @return {void} This function does not return a value.
  */
-function renderUsers() {
-  let user = document.getElementById('users');
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].userId == 0) continue;
-    const contact = users[i];
-    user.innerHTML += renderUsersHTML(contact, i);
+function renderContacts() {
+  let content = document.getElementById("users");
+  for (let i = 0; i < contacts.length; i++) {
+    const contact = contacts[i];
+    content.innerHTML += renderContactsHTML(contact, i);
   }
 }
-
 /**
  * Renders the categorys HTML elements on the page.
  * @return {void} This function does not return a value.
  */
 function renderCategorys() {
-  let task = document.getElementById('tasks');
+  let task = document.getElementById("tasks");
   for (let i = 0; i < categorys.length; i++) {
     task.innerHTML += renderCategorysHTML(i);
   }
 }
 
-document.addEventListener('click', function (event) {
-  let categoryContainer = document.getElementById('selectedCategoryContainer');
-  let tasksContainer = document.getElementById('tasks');
-  let arrowDownCategory = document.getElementById('arrowDownCategory');
-  let arrowUpCategory = document.getElementById('arrowUpCategory');
+document.addEventListener("click", function (event) {
+  let categoryContainer = document.getElementById("selectedCategoryContainer");
+  let tasksContainer = document.getElementById("tasks");
+  let arrowDownCategory = document.getElementById("arrowDownCategory");
+  let arrowUpCategory = document.getElementById("arrowUpCategory");
   if (!categoryContainer.contains(event.target)) {
-    if (tasksContainer.classList.contains('show')) {
-      tasksContainer.classList.remove('show');
-      arrowDownCategory.style.display = 'block';
-      arrowUpCategory.style.display = 'none';
+    if (tasksContainer.classList.contains("show")) {
+      tasksContainer.classList.remove("show");
+      arrowDownCategory.style.display = "block";
+      arrowUpCategory.style.display = "none";
     }
   }
 });
@@ -147,14 +145,14 @@ document.addEventListener('click', function (event) {
  */
 function showCategories() {
   resetCategoryErrorMessage();
-  if (document.getElementById('tasks').classList.contains('show')) {
-    document.getElementById('tasks').classList.remove('show');
-    document.getElementById('arrowDownCategory').style.display = 'block';
-    document.getElementById('arrowUpCategory').style.display = 'none';
+  if (document.getElementById("tasks").classList.contains("show")) {
+    document.getElementById("tasks").classList.remove("show");
+    document.getElementById("arrowDownCategory").style.display = "block";
+    document.getElementById("arrowUpCategory").style.display = "none";
   } else {
-    document.getElementById('tasks').classList.add('show');
-    document.getElementById('arrowDownCategory').style.display = 'none';
-    document.getElementById('arrowUpCategory').style.display = 'block';
+    document.getElementById("tasks").classList.add("show");
+    document.getElementById("arrowDownCategory").style.display = "none";
+    document.getElementById("arrowUpCategory").style.display = "block";
   }
 }
 
@@ -167,7 +165,7 @@ function showCategories() {
 function selectCategory(event, index) {
   event.stopPropagation();
   let selectedCategory = categorys[index];
-  document.getElementById('selectedCategory').innerHTML = selectedCategory;
+  document.getElementById("selectedCategory").innerHTML = selectedCategory;
   showCategories();
 }
 
@@ -176,7 +174,7 @@ function selectCategory(event, index) {
  * @return {void} This function does not return a value.
  */
 function resetCategoryErrorMessage() {
-  document.getElementById('categoryErrorMessage').innerHTML = '';
+  document.getElementById("categoryErrorMessage").innerHTML = "";
 }
 
 /**
@@ -184,32 +182,26 @@ function resetCategoryErrorMessage() {
  * @return {void} This function does not return a value.
  */
 function restrictPastDate() {
-  let dateInput = document.getElementById('date');
-  let today = new Date().toISOString().split('T')[0];
-  dateInput.setAttribute('min', today);
+  let dateInput = document.getElementById("date");
+  let today = new Date().toISOString().split("T")[0];
+  dateInput.setAttribute("min", today);
 }
 
 /**
  * Renders users' emblems based on certain conditions.
- * This function retrieves the 'usersEmblem' element from the DOM and clears its content.
- * It then iterates over the 'users' array, skipping any users with a 'userId' of 0.
- * For each user, it checks if the corresponding checkbox is checked. If it is, it adds the 'contact-list-selected' class to the corresponding 'contactList' element,
- * and either renders the user's emblem or increments the 'extraCount' if there are already 5 emblems rendered.
- * If the checkbox is not checked, it removes the 'contact-list-selected' class.
- * After iterating over all users, if there are any extra emblems to render, it renders them with the 'renderGreyEmblem' function.
+ * @return {void} This function does not return a value.
  */
 function showUsersEmblem() {
-  let usersEmblem = document.getElementById('usersEmblem');
-  usersEmblem.innerHTML = '';
+  let usersEmblem = document.getElementById("usersEmblem");
+  usersEmblem.innerHTML = "";
   let renderedCount = 0;
   let extraCount = 0;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].userId == 0) continue;
-    let contact = users[i];
-    let contactListChecked = document.getElementById('contactList' + i);
+  for (let i = 0; i < contacts.length; i++) {
+    let contact = contacts[i];
+    let contactListChecked = document.getElementById("contactList" + i);
     let checkedContact = document.getElementById(`checkbox${i}`);
     if (checkedContact.checked == true) {
-      contactListChecked.classList.add('contact-list-selected');
+      contactListChecked.classList.add("contact-list-selected");
       if (renderedCount < 5) {
         usersEmblem.innerHTML += renderEmblemUsers(contact);
         renderedCount++;
@@ -217,7 +209,7 @@ function showUsersEmblem() {
         extraCount++;
       }
     } else {
-      contactListChecked.classList.remove('contact-list-selected');
+      contactListChecked.classList.remove("contact-list-selected");
     }
   }
   if (extraCount > 0) {
@@ -225,19 +217,19 @@ function showUsersEmblem() {
   }
 }
 
-document.addEventListener('click', function (event) {
-  let usersContainer = document.getElementById('users');
-  let arrowDownUser = document.getElementById('arrowDownUser');
-  let arrowUpUser = document.getElementById('arrowUpUser');
-  let contactContainer = document.querySelector('.contact-container');
+document.addEventListener("click", function (event) {
+  let usersContainer = document.getElementById("users");
+  let arrowDownUser = document.getElementById("arrowDownUser");
+  let arrowUpUser = document.getElementById("arrowUpUser");
+  let contactContainer = document.querySelector(".contact-container");
   if (
     !usersContainer.contains(event.target) &&
     !contactContainer.contains(event.target)
   ) {
-    if (usersContainer.classList.contains('show')) {
-      usersContainer.classList.remove('show');
-      arrowDownUser.style.display = 'block';
-      arrowUpUser.style.display = 'none';
+    if (usersContainer.classList.contains("show")) {
+      usersContainer.classList.remove("show");
+      arrowDownUser.style.display = "block";
+      arrowUpUser.style.display = "none";
     }
   }
 });
@@ -247,14 +239,14 @@ document.addEventListener('click', function (event) {
  * @return {void} This function does not return a value.
  */
 function showUsers() {
-  if (document.getElementById('users').classList.contains('show')) {
-    document.getElementById('users').classList.remove('show');
-    document.getElementById('arrowDownUser').style.display = 'block';
-    document.getElementById('arrowUpUser').style.display = 'none';
+  if (document.getElementById("users").classList.contains("show")) {
+    document.getElementById("users").classList.remove("show");
+    document.getElementById("arrowDownUser").style.display = "block";
+    document.getElementById("arrowUpUser").style.display = "none";
   } else {
-    document.getElementById('users').classList.add('show');
-    document.getElementById('arrowDownUser').style.display = 'none';
-    document.getElementById('arrowUpUser').style.display = 'block';
+    document.getElementById("users").classList.add("show");
+    document.getElementById("arrowDownUser").style.display = "none";
+    document.getElementById("arrowUpUser").style.display = "block";
   }
 }
 
@@ -263,8 +255,8 @@ function showUsers() {
  * @return {void} This function does not return a value.
  */
 function renderSubtask() {
-  let subtask = document.getElementById('subtask');
-  subtask.innerHTML = '';
+  let subtask = document.getElementById("subtask");
+  subtask.innerHTML = "";
   for (let i = 0; i < Math.min(subtaskList.length, 5); i++) {
     subtask.innerHTML += renderSubtaskHTML(i);
   }
@@ -275,46 +267,37 @@ function renderSubtask() {
  * @return {string} The selected priority ('urgent', 'low', or 'medium').
  */
 function getSelectedPrio() {
-  let urgentBtn = document.getElementById('urgentPrio');
-  let lowprioBtn = document.getElementById('lowPrio');
-  if (urgentBtn.classList.contains('selected')) {
-    return 'urgent';
-  } else if (lowprioBtn.classList.contains('selected')) {
-    return 'low';
+  let urgentBtn = document.getElementById("urgentPrio");
+  let lowprioBtn = document.getElementById("lowPrio");
+  if (urgentBtn.classList.contains("selected")) {
+    return "urgent";
+  } else if (lowprioBtn.classList.contains("selected")) {
+    return "low";
   } else {
-    return 'medium';
+    return "medium";
   }
 }
 
 /**
- * Returns an array of selected user IDs from the checkboxes in the '.contact-list' element.
+ * Retrieves the IDs of all selected checkboxes in the contact list.
  * @return {Array<string>} An array of selected user IDs.
  */
-function getSelectedUserIds() {
+function getSelectedContactIds() {
   let checkboxes = document.querySelectorAll(
     '.contact-list input[type="checkbox"]:checked'
   );
-  let selectedUserIds = [];
+  let selectedContactIds = [];
   for (let checkbox of checkboxes) {
-    let userId = checkbox.getAttribute('data-userid');
-    selectedUserIds.push(userId);
-  }
-  return selectedUserIds;
-}
-
-/**
- * Generates a new card ID based on the existing tasks.
- * @param {Array<Object>} tasks - An array of task objects containing cardId.
- * @return {number} The new card ID.
- */
-function createCardId(tasks) {
-  let lastCardId = -1;
-  for (let i = 0; i < tasks.length; i++) {
-    if (tasks[i].cardId > lastCardId) {
-      lastCardId = tasks[i].cardId;
+    let contactId = +checkbox.getAttribute("data-userid");
+    contact = contacts.find((c) => c.id === contactId);
+    if (contact) {
+      contact.checked = true;
+      selectedContactIds.push(contact);
+    } else {
+      console.error(`Kontakt mit ID ${contactId} nicht gefunden.`);
     }
   }
-  return lastCardId; //
+  return selectedContactIds;
 }
 
 /**
@@ -324,39 +307,38 @@ function createCardId(tasks) {
  */
 async function createNewTask(event) {
   event.preventDefault();
-  let selectedCategory = document.getElementById('selectedCategory').innerHTML;
+  let selectedCategory = document.getElementById("selectedCategory").innerHTML;
   let spanContactContainer = document.getElementById(
-    'selectedCategoryContainer'
+    "selectedCategoryContainer"
   );
-  let categoryErrorMessage = document.getElementById('categoryErrorMessage');
+  let categoryErrorMessage = document.getElementById("categoryErrorMessage");
   if (
-    selectedCategory === 'Select task category' ||
-    selectedCategory.trim() === ''
+    selectedCategory === "Select task category" ||
+    selectedCategory.trim() === ""
   ) {
-    spanContactContainer.style.border = '1px solid red';
-    categoryErrorMessage.style.color = 'red';
-    categoryErrorMessage.style.display = 'flex';
-    categoryErrorMessage.innerHTML = 'Please select a category';
+    spanContactContainer.style.border = "1px solid red";
+    categoryErrorMessage.style.color = "red";
+    categoryErrorMessage.style.display = "flex";
+    categoryErrorMessage.innerHTML = "Please select a category";
     return;
   }
-  let lastCardId = createCardId(tasks);
-  let selectedUserIds = getSelectedUserIds();
+  let selectedContactIds = getSelectedContactIds();
   let task = {
-    title: document.getElementById('title').value,
-    description: document.getElementById('description').value,
-    userId: selectedUserIds,
-    date: document.getElementById('date').value,
+    title: document.getElementById("title").value,
+    description: document.getElementById("description").value,
+    contacts: selectedContactIds,
+    date: document.getElementById("date").value,
     priority: getSelectedPrio(),
     category: selectedCategory,
-    subtask: subtaskList,
-    status: 'toDo',
-    cardId: lastCardId + 1,
+    subtasks: subtaskList,
+    status: "toDo"
   };
+  console.log(task);
   taskAddedToBoard();
   setTimeout(async function () {
     resetUserDisplay();
-    await postData('tasks', task);
-    location.href = 'board.html';
+    await postData("tasks", task);
+    location.href = "board.html";
     clearAllTasks(event);
   }, 3000);
 }
@@ -370,8 +352,8 @@ async function createNewTask(event) {
  */
 function clearAllTasks(event) {
   event.preventDefault();
-  document.getElementById('title').value = '';
-  document.getElementById('description').value = '';
+  document.getElementById("title").value = "";
+  document.getElementById("description").value = "";
   clearAllCheckbox();
   showUsersEmblem();
   clearDateAndPriority();
@@ -389,13 +371,13 @@ function clearAllTasks(event) {
  */
 function resetCategoryErrorMessage() {
   let spanContactContainer = document.getElementById(
-    'selectedCategoryContainer'
+    "selectedCategoryContainer"
   );
-  let categoryErrorMessage = document.getElementById('categoryErrorMessage');
-  spanContactContainer.style.border = '';
-  categoryErrorMessage.style.display = 'none';
-  categoryErrorMessage.style.color = '';
-  categoryErrorMessage.innerHTML = '';
+  let categoryErrorMessage = document.getElementById("categoryErrorMessage");
+  spanContactContainer.style.border = "";
+  categoryErrorMessage.style.display = "none";
+  categoryErrorMessage.style.color = "";
+  categoryErrorMessage.innerHTML = "";
 }
 
 /**
@@ -405,13 +387,13 @@ function resetCategoryErrorMessage() {
  * @return {void} This function does not return a value.
  */
 function taskAddedToBoard() {
-  let boardAddedToTask = document.getElementById('taskAddedToBoard');
+  let boardAddedToTask = document.getElementById("taskAddedToBoard");
   let boardAddedToTaskContainer = document.getElementById(
-    'taskAddedToBoardStyle'
+    "taskAddedToBoardStyle"
   );
-  boardAddedToTask.style.display = 'flex';
-  boardAddedToTaskContainer.classList.add('move-top');
+  boardAddedToTask.style.display = "flex";
+  boardAddedToTaskContainer.classList.add("move-top");
   setTimeout(function () {
-    document.getElementById('taskAddedToBoard').style.display = 'none';
+    document.getElementById("taskAddedToBoard").style.display = "none";
   }, 3000);
 }

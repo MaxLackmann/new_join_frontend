@@ -358,7 +358,7 @@ async function editTask(cardId, event) {
     category: boardEdit[0].category,
     subtasks: boardEdit[0].subtasks,
     status: boardEdit[0].status,
-    // cardId: cardId,
+    cardId: cardId,
   };
   resetEditUserDisplay();
   console.log('Payload:', updatedTask);
