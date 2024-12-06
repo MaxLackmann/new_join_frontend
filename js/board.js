@@ -12,7 +12,7 @@ async function initBoard() {
 }
 
 let boardEdit = [];
-let status = ['toDo', 'in Progress', 'awaitFeedback', 'done'];
+let status = ["toDo", "in Progress", "awaitFeedback", "done"];
 let currentDraggedElement;
 
 /**
@@ -20,10 +20,10 @@ let currentDraggedElement;
  */
 async function updateHTML() {
   await tasksArray();
-  updateTasksByStatus('toDo', 'toDo');
-  updateTasksByStatus('inProgress', 'inProgress');
-  updateTasksByStatus('awaitFeedback', 'awaitFeedback');
-  updateTasksByStatus('done', 'done');
+  updateTasksByStatus("toDo", "toDo");
+  updateTasksByStatus("inProgress", "inProgress");
+  updateTasksByStatus("awaitFeedback", "awaitFeedback");
+  updateTasksByStatus("done", "done");
 }
 
 /**
@@ -35,7 +35,7 @@ async function updateHTML() {
 function updateTasksByStatus(status, elementId) {
   let filteredTasks = tasks.filter((task) => task.status == status);
   let boardCard = document.getElementById(elementId);
-  boardCard.innerHTML = '';
+  boardCard.innerHTML = "";
   if (filteredTasks.length == 0) {
     boardCard.innerHTML = renderEmptyBoard(status);
     return;
@@ -54,14 +54,14 @@ function updateTasksByStatus(status, elementId) {
  */
 function getBackgroundCategory(task) {
   switch (task.category) {
-    case 'User Story':
-      return '#0038FF';
-    case 'Technical Task':
-      return '#1FD7C1';
-    case 'Development':
-      return '#FFBB2B';
-    case 'Editing':
-      return '#FF5EB3';
+    case "User Story":
+      return "#0038FF";
+    case "Technical Task":
+      return "#1FD7C1";
+    case "Development":
+      return "#FFBB2B";
+    case "Editing":
+      return "#FF5EB3";
   }
 }
 
@@ -74,7 +74,7 @@ function showSmallUsersEmblem(task) {
   let smallUsersEmblem = document.getElementById(
     `smallUsersEmblem${task.cardId}`
   );
-  smallUsersEmblem.innerHTML = '';
+  smallUsersEmblem.innerHTML = "";
 
   let { renderedCount, extraCount } = renderUserEmblems(task, smallUsersEmblem);
 
@@ -95,13 +95,13 @@ function renderUserEmblems(task, container) {
 
   if (task.contacts && task.contacts.length > 0) {
     for (let contact of task.contacts) {
-        if (renderedCount < 5) {
-          container.innerHTML += renderSmallUsersEmblem(contact);
-          renderedCount++;
-        } else {
-          extraCount++;
-        }
+      if (renderedCount < 5) {
+        container.innerHTML += renderSmallUsersEmblem(contact);
+        renderedCount++;
+      } else {
+        extraCount++;
       }
+    }
   }
   return { renderedCount, extraCount };
 }
@@ -149,29 +149,12 @@ function allowDrop(event) {
  */
 async function moveTo(event, status) {
   event.stopPropagation();
-  // Find the task object with the cardId equal to currentDraggedElement
   const task = tasks.find((t) => t.cardId == currentDraggedElement);
   task.status = status;
   removeHighlight(status);
   console.log(task);
-  await updateBoard(status); // Assuming updateBoard is an async function
+  await patchData(`tasks/${task.cardId}`, task);
   await updateHTML();
-}
-
-/**
- * Updates the board by updating the status of a task in the tasks JSON data.
- * @param {string} status - The new status to update the task to.
- * @return {Promise<void>} A promise that resolves when the task has been successfully updated.
- */
-async function updateBoard(status) {
-  // Hole die gesamten Daten des Tasks
-  let tasksJSON = await loadData('tasks');
-  for (let key in tasksJSON) {
-    let task = tasksJSON[key];
-    if (task.cardId == currentDraggedElement) {
-      await patchData(`tasks/${task.cardId}`, { status: status });
-    }
-  }
 }
 
 /**
@@ -180,7 +163,7 @@ async function updateBoard(status) {
  * @return {void} This function does not return anything.
  */
 function highlight(cardId) {
-  document.getElementById(cardId).classList.add('drag-area-highlight');
+  document.getElementById(cardId).classList.add("drag-area-highlight");
 }
 
 /**
@@ -189,7 +172,7 @@ function highlight(cardId) {
  * @return {void} This function does not return anything.
  */
 function removeHighlight(status) {
-  document.getElementById(status).classList.remove('drag-area-highlight');
+  document.getElementById(status).classList.remove("drag-area-highlight");
 }
 
 /**
@@ -199,16 +182,16 @@ function removeHighlight(status) {
  */
 function getElementIdByStatus(status) {
   switch (status) {
-    case 'toDo':
-      return 'toDo';
-    case 'inProgress':
-      return 'inProgress';
-    case 'awaitFeedback':
-      return 'awaitFeedback';
-    case 'done':
-      return 'done';
+    case "toDo":
+      return "toDo";
+    case "inProgress":
+      return "inProgress";
+    case "awaitFeedback":
+      return "awaitFeedback";
+    case "done":
+      return "done";
     default:
-      return '';
+      return "";
   }
 }
 
@@ -218,9 +201,9 @@ function getElementIdByStatus(status) {
  * @return {Promise<void>} A promise that resolves when the big card is shown.
  */
 async function showBigCard(cardId) {
-  document.getElementById('showBigCard').classList.remove('dnone');
-  let content = document.getElementById('showBigCard');
-  content.innerHTML = '';
+  document.getElementById("showBigCard").classList.remove("dnone");
+  let content = document.getElementById("showBigCard");
+  content.innerHTML = "";
   content.innerHTML = renderBigCardHTML(cardId);
   showBigUsersEmblem(cardId);
   renderBigSubtasks(cardId);
@@ -246,7 +229,7 @@ async function deleteTaskOfBoard(cardId) {
  * @return {Promise<void>} A promise that resolves when the task is deleted.
  */
 async function deleteTask(cardId) {
-  let tasksJSON = await loadData('tasks');
+  let tasksJSON = await loadData("tasks");
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == cardId) {
@@ -265,7 +248,7 @@ function getSelectedUserIds() {
   );
   let selectedUserIds = [];
   for (let checkbox of checkboxes) {
-    let userId = checkbox.getAttribute('data-userid');
+    let userId = checkbox.getAttribute("data-userid");
     selectedUserIds.push(userId);
   }
   return selectedUserIds;
@@ -278,7 +261,7 @@ function getSelectedUserIds() {
  * @return {Promise<void>} A promise that resolves when the subtask status is updated and the HTML display is refreshed.
  */
 async function checkedSubtask(cardId, isubtask) {
-  let value = document.getElementById('checkbox' + isubtask).checked;
+  let value = document.getElementById("checkbox" + isubtask).checked;
   await updateSubtasks(cardId, isubtask, value);
   await updateHTML();
 }
@@ -291,15 +274,15 @@ async function checkedSubtask(cardId, isubtask) {
  * @return {Promise<void>} A promise that resolves when the subtask status is updated and the HTML display is refreshed.
  */
 async function updateSubtasks(cardId, isubtask, value) {
-  let tasksJSON = await loadData('tasks');
+  let tasksJSON = await loadData("tasks");
   for (let key in tasksJSON) {
-      let task = tasksJSON[key];
-      if (task.cardId == cardId) {
-          let subtaskId = task.subtasks[isubtask].id;
-          let patchUrl = `tasks/${task.cardId}/subtasks/${subtaskId}`;       
-          let response = await patchData(patchUrl, { checked: value });
-          console.log(response);
-      }
+    let task = tasksJSON[key];
+    if (task.cardId == cardId) {
+      let subtaskId = task.subtasks[isubtask].id;
+      let patchUrl = `tasks/${task.cardId}/subtasks/${subtaskId}`;
+      let response = await patchData(patchUrl, { checked: value });
+      console.log(response);
+    }
   }
 }
 
@@ -337,10 +320,10 @@ async function mobilemoveTo(status, cardId, event) {
  */
 function openMobileOptions(cardId, status, event) {
   event.stopPropagation();
-  let link = document.getElementById('moveTo_' + cardId + '_' + status);
-  link.classList.add('disabled');
-  document.getElementById('amobile_boardOptions' + cardId).style.display =
-    'flex';
+  let link = document.getElementById("moveTo_" + cardId + "_" + status);
+  link.classList.add("disabled");
+  document.getElementById("amobile_boardOptions" + cardId).style.display =
+    "flex";
 }
 
 /**
@@ -351,24 +334,24 @@ function openMobileOptions(cardId, status, event) {
  */
 function closeMobilOptions(event, cardId) {
   event.stopPropagation();
-  document.getElementById('amobile_boardOptions' + cardId).style.display =
-    'none';
+  document.getElementById("amobile_boardOptions" + cardId).style.display =
+    "none";
 }
 
-let mobilWindow = window.matchMedia('(max-width: 770px)');
-mobilWindow.addEventListener('change', myFunc);
+let mobilWindow = window.matchMedia("(max-width: 770px)");
+mobilWindow.addEventListener("change", myFunc);
 
 /**
  * Updates the display style of elements with the class 'mobileBoard' based on the current media query match.
  * @return {void} This function does not return a value.
  */
 function myFunc() {
-  const elements = document.querySelectorAll('.mobileBoard');
+  const elements = document.querySelectorAll(".mobileBoard");
   elements.forEach((element) => {
     if (mobilWindow.matches) {
-      element.style.display = 'flex';
+      element.style.display = "flex";
     } else {
-      element.style.display = 'none';
+      element.style.display = "none";
     }
   });
 }
@@ -378,13 +361,13 @@ function myFunc() {
  * @return {void} This function does not return a value.
  */
 function mobileDetails() {
-  const elements = document.querySelectorAll('.mobileBoard');
+  const elements = document.querySelectorAll(".mobileBoard");
   outWidth = window.innerWidth;
   elements.forEach((element) => {
     if (outWidth <= 770) {
-      element.style.display = 'flex';
+      element.style.display = "flex";
     } else {
-      element.style.display = 'none';
+      element.style.display = "none";
     }
   });
 }
