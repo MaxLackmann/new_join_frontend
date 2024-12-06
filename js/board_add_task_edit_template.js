@@ -207,7 +207,7 @@ function renderGreyEmblem(remainingCount) {
  */
 function renderEmblemUsers(user) {
   return /*html*/ `
-          <div class="edit-emblem" style="background-color: ${user.color}" id="${user.userId}">
+          <div class="edit-emblem" style="background-color: ${user.color}" id="${user.id}">
           ${user.emblem}
         </div>  `;
 }

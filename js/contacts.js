@@ -17,18 +17,18 @@ async function initContact() {
  */
 async function newContact(event) {
   event.preventDefault();
-  let nameContact = document.getElementById('nameContact').value;
+  let nameContact = document.getElementById("nameContact").value;
   let nameContactUpper = nameContact[0].toUpperCase() + nameContact.slice(1);
   let newContact = {
     name: nameContactUpper,
-    email: document.getElementById('emailContact').value,
-    phone: document.getElementById('phoneContact').value,
+    email: document.getElementById("emailContact").value,
+    phone: document.getElementById("phoneContact").value,
     emblem: renderEmblem(nameContact),
     color: colorRandom(),
-    checked: false,
+    checked: false
   };
   contacts.push(newContact);
-  await postData('contacts', newContact);
+  await postData("contacts", newContact);
   showNewContactDetails(newContact);
   console.log(newContact);
 }
@@ -42,11 +42,11 @@ async function newContact(event) {
 async function editContact(event, i) {
   event.preventDefault();
   contactEdit = contacts[i];
-  contactEdit['name'] = document.getElementById('nameContact').value;
-  contactEdit['email'] = document.getElementById('emailContact').value;
-  contactEdit['phone'] = document.getElementById('phoneContact').value;
-  contactEdit['emblem'] = renderEmblem(
-    document.getElementById('nameContact').value
+  contactEdit["name"] = document.getElementById("nameContact").value;
+  contactEdit["email"] = document.getElementById("emailContact").value;
+  contactEdit["phone"] = document.getElementById("phoneContact").value;
+  contactEdit["emblem"] = renderEmblem(
+    document.getElementById("nameContact").value
   );
   await firebaseUpdate(contactEdit);
   closeDialog();
@@ -65,7 +65,7 @@ async function editContact(event, i) {
 async function deleteContact(i) {
   let contactDelete = contacts[i];
   contacts.splice(i, 1);
-  document.getElementById('divDetails').innerHTML = '';
+  document.getElementById("divDetails").innerHTML = "";
   await firebaseDelete(contactDelete);
   renderListContact();
   if (window.innerWidth <= 710) {
@@ -80,14 +80,14 @@ async function deleteContact(i) {
  * @return {Promise<void>} A promise that resolves when the contact is successfully updated.
  */
 async function firebaseUpdate(contactEdit) {
-  let contactsJson = await loadData('contacts');
+  let contactsJson = await loadData("contacts");
   for (key in contactsJson) {
     let contactDB = contactsJson[key];
-    if (contactDB.contactId == contactEdit.contactId) {
+    if (contactDB.id == contactEdit.id) {
       contactId = contactDB.id;
-      patchData(`contacts/${contactId}`, contactEdit);
     }
   }
+  await patchData(`contacts/${contactId}`, contactEdit);
 }
 
 /**
@@ -97,14 +97,14 @@ async function firebaseUpdate(contactEdit) {
  * @return {Promise<void>} A promise that resolves when the contact is successfully deleted.
  */
 async function firebaseDelete(contactDelete) {
-  let contactsJson = await loadData('contacts');
+  let contactsJson = await loadData("contacts");
   for (key in contactsJson) {
     let contactDB = contactsJson[key];
-    if (contactDB.contactId == contactDelete.contactId) {
+    if (contactDB.id == contactDelete.id) {
       contactId = contactDB.id;
-      deleteData(`contacts/${contactId}`);
     }
   }
+  deleteData(`contacts/${contactId}`);
 }
 
 /**
@@ -113,8 +113,8 @@ async function firebaseDelete(contactDelete) {
  * @return {string} The generated emblem.
  */
 function renderEmblem(name) {
-  let aux = name.split(' ');
-  let capital = '';
+  let aux = name.split(" ");
+  let capital = "";
   for (let j = 0; j < aux.length; j++) {
     if (j <= 1) {
       capital += aux[j].slice(0, 1).toUpperCase();
@@ -165,11 +165,11 @@ function showDetailContact(i) {
  */
 function removeSelectedClassFromAllContacts() {
   let allContactContainers = document.querySelectorAll(
-    '.contact-list-container'
+    ".contact-list-container"
   );
   for (let i = 0; i < allContactContainers.length; i++) {
     let container = allContactContainers[i];
-    container.classList.remove('contact-list-container-selected');
+    container.classList.remove("contact-list-container-selected");
   }
 }
 
@@ -182,7 +182,7 @@ function addSelectedClassToCurrentContact(i) {
   let contactListContainer = document.getElementById(
     `contactListContainer${i}`
   );
-  contactListContainer.classList.add('contact-list-container-selected');
+  contactListContainer.classList.add("contact-list-container-selected");
 }
 
 /**
@@ -191,11 +191,11 @@ function addSelectedClassToCurrentContact(i) {
  * @return {void} This function does not return anything.
  */
 function displayContactDetails(i) {
-  let infoContact = document.getElementById('divDetails');
-  infoContact.innerHTML = ' ';
-  infoContact.classList.remove('move-left');
+  let infoContact = document.getElementById("divDetails");
+  infoContact.innerHTML = " ";
+  infoContact.classList.remove("move-left");
   infoContact.offsetWidth;
-  infoContact.classList.add('move-left');
+  infoContact.classList.add("move-left");
   infoContact.innerHTML += renderContactinList(i);
   mobileDetails();
 }
@@ -207,26 +207,26 @@ function displayContactDetails(i) {
  * @return {void} This function does not return anything.
  */
 function openDialog(newContact, i) {
-  let dialog = document.getElementById('dialog');
-  dialog.classList.remove('d-none');
+  let dialog = document.getElementById("dialog");
+  dialog.classList.remove("d-none");
   if (newContact == true) {
-    let functionNew = 'newContact(event)';
+    let functionNew = "newContact(event)";
     dialog.innerHTML = renderContactDialog(
-      'Add contact',
+      "Add contact",
       functionNew,
-      'Create Contact'
+      "Create Contact"
     );
   } else {
     let contact = contacts[i];
-    let functionNew = 'editContact(event,' + i + ')';
-    dialog.innerHTML = renderContactDialog('Edit contact', functionNew, 'Save');
+    let functionNew = "editContact(event," + i + ")";
+    dialog.innerHTML = renderContactDialog("Edit contact", functionNew, "Save");
     document.getElementById(
-      'iconContact'
-    ).outerHTML = `<div class="emblem-info" id="emblemContact" style="background-color: ${contact['color']}">${contact['emblem']}</div>`;
-    document.getElementById('textAdd').classList.add('d-none');
-    document.getElementById('nameContact').value = contact['name'];
-    document.getElementById('emailContact').value = contact['email'];
-    document.getElementById('phoneContact').value = contact['phone'];
+      "iconContact"
+    ).outerHTML = `<div class="emblem-info" id="emblemContact" style="background-color: ${contact["color"]}">${contact["emblem"]}</div>`;
+    document.getElementById("textAdd").classList.add("d-none");
+    document.getElementById("nameContact").value = contact["name"];
+    document.getElementById("emailContact").value = contact["email"];
+    document.getElementById("phoneContact").value = contact["phone"];
   }
 }
 
@@ -235,12 +235,12 @@ function openDialog(newContact, i) {
  * @return {void} This function does not return anything.
  */
 function closeDialog() {
-  let mobileMode = document.getElementById('amobile_nameContact');
-  if (mobileMode != null && mobileMode.style.display == 'flex') {
-    mobileMode.style.display = 'none';
+  let mobileMode = document.getElementById("amobile_nameContact");
+  if (mobileMode != null && mobileMode.style.display == "flex") {
+    mobileMode.style.display = "none";
   }
-  let dialog = document.getElementById('dialog');
-  dialog.classList.add('d-none');
+  let dialog = document.getElementById("dialog");
+  dialog.classList.add("d-none");
 }
 /**
  * Displays the details of a newly created contact.
@@ -251,12 +251,12 @@ function showNewContactDetails(newContact) {
   closeDialog();
   cleanContactControls();
   renderListContact();
-  document.getElementById('contactCreated').classList.remove('d-none');
+  document.getElementById("contactCreated").classList.remove("d-none");
   for (let i = 0; i < contacts.length; i++) {
     if (newContact.name == contacts[i].name) {
-      let infoContact = document.getElementById('divDetails');
-      infoContact.innerHTML = ' ';
-      infoContact.classList.remove('move-left');
+      let infoContact = document.getElementById("divDetails");
+      infoContact.innerHTML = " ";
+      infoContact.classList.remove("move-left");
       infoContact.innerHTML += renderContactinList(i);
       mobileDetails();
     }
@@ -270,7 +270,7 @@ function showNewContactDetails(newContact) {
  */
 function contactCreatedDiv() {
   setTimeout(() => {
-    document.getElementById('contactCreated').classList.add('d-none');
+    document.getElementById("contactCreated").classList.add("d-none");
   }, 2400);
 }
 
@@ -279,27 +279,27 @@ function contactCreatedDiv() {
  * @return {void} This function does not return a value.
  */
 function cleanContactControls() {
-  document.getElementById('nameContact').value = '';
-  document.getElementById('emailContact').value = '';
-  document.getElementById('phoneContact').value = '';
+  document.getElementById("nameContact").value = "";
+  document.getElementById("emailContact").value = "";
+  document.getElementById("phoneContact").value = "";
 }
 
-let mobilWindow = window.matchMedia('(max-width:710px)');
-mobilWindow.addEventListener('change', () => myFunc());
+let mobilWindow = window.matchMedia("(max-width:710px)");
+mobilWindow.addEventListener("change", () => myFunc());
 
 /**
  * Function to handle mobile window changes and adjust contact details display accordingly.
  */
 function myFunc() {
   if (mobilWindow.matches) {
-    document.getElementById('divContactDetails').style.display = 'none';
-    document.getElementById('divContactList').style.display = 'flex';
+    document.getElementById("divContactDetails").style.display = "none";
+    document.getElementById("divContactList").style.display = "flex";
   } else {
-    document.getElementById('divContactDetails').style.display = 'flex';
-    document.getElementById('divContactList').style.display = 'flex';
-    let amobileDiv = document.getElementById('amobile_nameContact');
+    document.getElementById("divContactDetails").style.display = "flex";
+    document.getElementById("divContactList").style.display = "flex";
+    let amobileDiv = document.getElementById("amobile_nameContact");
     if (amobileDiv != null) {
-      amobileDiv.style.display = 'none';
+      amobileDiv.style.display = "none";
     }
   }
 }
@@ -313,9 +313,9 @@ function myFunc() {
 function mobileDetails() {
   outWidth = window.innerWidth;
   if (outWidth <= 710) {
-    document.getElementById('divContactDetails').style.display = 'flex';
-    document.getElementById('divContactList').style.display = 'none';
-    document.getElementById('divDetails').classList.remove('move-left');
+    document.getElementById("divContactDetails").style.display = "flex";
+    document.getElementById("divContactList").style.display = "none";
+    document.getElementById("divDetails").classList.remove("move-left");
   }
 }
 
@@ -326,8 +326,8 @@ function mobileDetails() {
 function backMobileContListe() {
   outWidth = window.innerWidth;
   if (outWidth <= 710) {
-    document.getElementById('divContactDetails').style.display = 'none';
-    document.getElementById('divContactList').style.display = 'flex';
+    document.getElementById("divContactDetails").style.display = "none";
+    document.getElementById("divContactList").style.display = "flex";
   }
 }
 
@@ -336,12 +336,12 @@ function backMobileContListe() {
  * @return {void} This function does not return a value.
  */
 function openMobileDialog() {
-  let mobileMode = document.getElementById('amobile_nameContact');
+  let mobileMode = document.getElementById("amobile_nameContact");
   if (mobileMode != null) {
-    if (mobileMode.style.display == 'none') {
-      mobileMode.style.display = 'flex';
+    if (mobileMode.style.display == "none") {
+      mobileMode.style.display = "flex";
     } else {
-      mobileMode.style.display = 'none';
+      mobileMode.style.display = "none";
     }
   }
 }

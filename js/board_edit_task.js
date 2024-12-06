@@ -340,6 +340,28 @@ function updateContactListSelection() {
 }
 
 /**
+ * Retrieves the IDs of all selected checkboxes in the contact list.
+ * @return {Array<string>} An array of selected user IDs.
+ */
+function getSelectedContactIds() {
+  let checkboxes = document.querySelectorAll(
+    '.edit-contactlist input[type="checkbox"]:checked'
+  );
+  let selectedContactIds = [];
+  for (let checkbox of checkboxes) {
+    let contactId = +checkbox.getAttribute("data-userid");
+    contact = contacts.find((c) => c.id === contactId);
+    if (contact) {
+      contact.checked = true;
+      selectedContactIds.push(contact.id);
+    } else {
+      console.error(`Kontakt mit ID ${contactId} nicht gefunden.`);
+    }
+  }
+  return selectedContactIds;
+}
+
+/**
  * Edits a task by updating its properties and saving the changes.
  * @param {number} cardId - The ID of the card associated with the task.
  * @param {Event} event - The event object that triggered the function.
@@ -348,11 +370,10 @@ function updateContactListSelection() {
 async function editTask(cardId, event) {
   event.preventDefault();
   let selectedContactIds = getSelectedContactIds();
-  event.preventDefault();
-  updatedTask = {
+  let updatedTask = {
     title: document.getElementById('editTitle').value,
     description: document.getElementById('editDescription').value,
-    contacts: selectedContactIds,
+    contact_ids: selectedContactIds, // Ändere dies von "contacts" zu "contact_ids"
     date: document.getElementById('editDate').value,
     priority: getEditSelectedPrio(),
     category: boardEdit[0].category,
@@ -393,26 +414,4 @@ function resetEditUserDisplay() {
   users.classList.remove('show');
   document.getElementById('arrowDownUser').style.display = 'block';
   document.getElementById('arrowUpUser').style.display = 'none';
-}
-
-/**
- * Retrieves the IDs of all selected checkboxes in the contact list.
- * @return {Array<string>} An array of selected user IDs.
- */
-function getSelectedContactIds() {
-  let checkboxes = document.querySelectorAll(
-    '.edit-contactlist input[type="checkbox"]:checked'
-  );
-  let selectedContactIds = [];
-  for (let checkbox of checkboxes) {
-    let contactId = +checkbox.getAttribute("data-userid");
-    contact = contacts.find((c) => c.id === contactId);
-    if (contact) {
-      contact.checked = true;
-      selectedContactIds.push(contact);
-    } else {
-      console.error(`Kontakt mit ID ${contactId} nicht gefunden.`);
-    }
-  }
-  return selectedContactIds;
 }

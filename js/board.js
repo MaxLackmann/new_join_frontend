@@ -153,6 +153,7 @@ async function moveTo(event, status) {
   const task = tasks.find((t) => t.cardId == currentDraggedElement);
   task.status = status;
   removeHighlight(status);
+  console.log(task);
   await updateBoard(status); // Assuming updateBoard is an async function
   await updateHTML();
 }
@@ -163,12 +164,12 @@ async function moveTo(event, status) {
  * @return {Promise<void>} A promise that resolves when the task has been successfully updated.
  */
 async function updateBoard(status) {
+  // Hole die gesamten Daten des Tasks
   let tasksJSON = await loadData('tasks');
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == currentDraggedElement) {
       await patchData(`tasks/${task.cardId}`, { status: status });
-      console.log('updated');
     }
   }
 }

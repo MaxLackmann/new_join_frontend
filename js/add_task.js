@@ -292,7 +292,7 @@ function getSelectedContactIds() {
     contact = contacts.find((c) => c.id === contactId);
     if (contact) {
       contact.checked = true;
-      selectedContactIds.push(contact);
+      selectedContactIds.push(contact.id);
     } else {
       console.error(`Kontakt mit ID ${contactId} nicht gefunden.`);
     }
@@ -326,7 +326,7 @@ async function createNewTask(event) {
   let task = {
     title: document.getElementById("title").value,
     description: document.getElementById("description").value,
-    contacts: selectedContactIds,
+    contact_ids: selectedContactIds,
     date: document.getElementById("date").value,
     priority: getSelectedPrio(),
     category: selectedCategory,
