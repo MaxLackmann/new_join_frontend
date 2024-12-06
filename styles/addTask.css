@@ -486,7 +486,7 @@ input[type='checkbox'] {
   right: 0;
   left: 0;
   bottom: 0;
-  z-index: 10;
+  z-index: 11;
   background-color: rgba(0, 0, 0, 0.8);
   overflow: hidden;
 }
@@ -693,6 +693,8 @@ input[type='checkbox'] {
   .add-task-container {
     display: flex;
     flex-direction: column;
+    height: 60vh;
+    overflow-y: auto
   }
 
   .headline-task {
@@ -710,7 +712,6 @@ input[type='checkbox'] {
     margin-left: 0px;
     align-items: center;
     margin-top: 180px;
-    margin-bottom: 90px;
   }
 
   .required-field-text {
@@ -733,7 +734,6 @@ input[type='checkbox'] {
   .second-task-input-container {
     width: 440px;
     gap: 12px;
-    margin-bottom: 100px;
   }
 
   .second-task-input-container input {
@@ -828,6 +828,7 @@ input[type='checkbox'] {
     width: 100%;
     align-items: center;
     margin-top: 10px;
+    height: 45vh;
   }
 
   #date {
