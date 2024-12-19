@@ -153,7 +153,7 @@ async function moveTo(event, status) {
   task.status = status;
   removeHighlight(status);
   console.log(task);
-  await patchData(`tasks/${task.cardId}`, task);
+  await patchData(`tasks/${task.cardId}`, task, true);
   await updateHTML();
 }
 
@@ -233,7 +233,7 @@ async function deleteTask(cardId) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == cardId) {
-      await deleteData(`tasks/${task.cardId}`);
+      await deleteData(`tasks/${task.cardId}`, true);
     }
   }
 }
@@ -280,7 +280,7 @@ async function updateSubtasks(cardId, isubtask, value) {
     if (task.cardId == cardId) {
       let subtaskId = task.subtasks[isubtask].id;
       let patchUrl = `tasks/${task.cardId}/subtasks/${subtaskId}`;
-      let response = await patchData(patchUrl, { checked: value });
+      let response = await patchData(patchUrl, { checked: value }, true);
       console.log(response);
     }
   }

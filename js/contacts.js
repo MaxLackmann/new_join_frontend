@@ -25,10 +25,9 @@ async function newContact(event) {
     phone: document.getElementById("phoneContact").value,
     emblem: renderEmblem(nameContact),
     color: colorRandom(),
-    checked: false
   };
   contacts.push(newContact);
-  await postData("contacts", newContact);
+  await postData("contacts", newContact, true);
   showNewContactDetails(newContact);
   console.log(newContact);
 }
@@ -48,7 +47,7 @@ async function editContact(event, i) {
   contactEdit["emblem"] = renderEmblem(
     document.getElementById("nameContact").value
   );
-  await firebaseUpdate(contactEdit);
+  await patchData(`contacts/${contactEdit.id}`, contactEdit, true);
   closeDialog();
   cleanContactControls();
   renderListContact();
@@ -66,45 +65,13 @@ async function deleteContact(i) {
   let contactDelete = contacts[i];
   contacts.splice(i, 1);
   document.getElementById("divDetails").innerHTML = "";
-  await firebaseDelete(contactDelete);
+  try {
+    await deleteData(`contacts/${contactDelete.id}`, true);
+  } catch (error) {}
   renderListContact();
   if (window.innerWidth <= 710) {
     backMobileContListe();
   }
-}
-
-/**
- * Updates a contact in the Firebase database by finding the contact with the matching contactId
- * and replacing it with the new contact data provided in the contactEdit parameter.
- * @param {Object} contactEdit - The updated contact data to be applied.
- * @return {Promise<void>} A promise that resolves when the contact is successfully updated.
- */
-async function firebaseUpdate(contactEdit) {
-  let contactsJson = await loadData("contacts");
-  for (key in contactsJson) {
-    let contactDB = contactsJson[key];
-    if (contactDB.id == contactEdit.id) {
-      contactId = contactDB.id;
-    }
-  }
-  await patchData(`contacts/${contactId}`, contactEdit);
-}
-
-/**
- * Deletes a contact from the Firebase database by finding the contact with the matching contactId
- * and deleting it.
- * @param {Object} contactDelete - The contact object to be deleted.
- * @return {Promise<void>} A promise that resolves when the contact is successfully deleted.
- */
-async function firebaseDelete(contactDelete) {
-  let contactsJson = await loadData("contacts");
-  for (key in contactsJson) {
-    let contactDB = contactsJson[key];
-    if (contactDB.id == contactDelete.id) {
-      contactId = contactDB.id;
-    }
-  }
-  deleteData(`contacts/${contactId}`);
 }
 
 /**
@@ -128,7 +95,7 @@ function renderEmblem(name) {
  * @return {string} The randomly generated color.
  */
 function colorRandom() {
-  return colors[Math.floor(Math.random() * colors.length)];
+  return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 }
 
 /**

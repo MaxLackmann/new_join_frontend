@@ -8,9 +8,7 @@
 async function initLogin() {
   joinAnimation();
   moveIcon();
-  usersJson = await loadData('users');
 }
-let usersJson;
 
 /**
  * Initializes the button element by disabling it and updating its class.
@@ -40,20 +38,13 @@ function isChecked() {
  */
 async function AddUser(event) {
   event.preventDefault();
-  let name = document.getElementById('name').value;
+  let username = document.getElementById('name').value;
   let email = document.getElementById('email').value;
   let password = document.getElementById('password').value;
-  let confirmpassword = document.getElementById('passwordConfirm').value;
-  if (password != confirmpassword) {
-    showPasswordError();
-    return false;
-  }
-  if (await emailExists(email)) {
-    checkEmailExist();
-    return false;
-  }
-  let user = await createUser(name, email, password);
-  await postData('users', user);
+  let confirm_password = document.getElementById('passwordConfirm').value;
+
+  let user = await createUser(username, email, password,confirm_password);
+  await postData('registration', user, false);
   showSignUpDialog();
   await sleep(3000);
   cleanContactControls();
@@ -70,30 +61,19 @@ function showPasswordError() {
 }
 
 /**
- * Updates the email input element to display an error message for an existing email.
- */
-function checkEmailExist() {
-  let emailElement = document.getElementById('email');
-  emailElement.value = ''; // Email-Input leeren
-  emailElement.value = 'Diese E-Mail existiert bereits';
-  emailElement.style = 'color:red; font-weight:bold;';
-  emailElement.style.border = '2px solid red';
-}
-
-/**
  * Creates a new user object with the given name, email, and password.
- * @param {string} name - The name of the user.
+ * @param {string} username - The name of the user.
  * @param {string} email - The email of the user.
  * @param {string} password - The password of the user.
  * @return {Promise<Object>} A promise that resolves to the newly created user object.
  */
-async function createUser(name, email, password) {
+async function createUser(username, email, password, confirm_password) {
   return {
-    userId: (await findLastUserId()) + 1,
-    name: name,
+    username: username,
     email: email,
     password: password,
-    emblem: getEmblemUser(name),
+    confirm_password: confirm_password,
+    emblem: getEmblemUser(username),
     color: colorRandom(),
   };
 }
@@ -134,7 +114,7 @@ async function emailExists(email) {
  * @return {string} A randomly selected color from the `colors` array.
  */
 function colorRandom() {
-  return colors[Math.floor(Math.random() * colors.length)];
+  return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 }
 
 /**
@@ -153,22 +133,6 @@ function getEmblemUser(name) {
   return initials;
 }
 
-/**
- * Finds the last user ID from the 'users' data by iterating through the users
- * and comparing their IDs. Returns the last user ID found.
- * @return {Promise<number>} The last user ID found in the 'users' data.
- */
-async function findLastUserId() {
-  let usersJson = await loadData('users');
-  let lastId = 1;
-  for (key in usersJson) {
-    let user = usersJson[key];
-    if (user.userId > lastId) {
-      lastId = user.userId;
-    }
-  }
-  return lastId;
-}
 
 /**
  * Creates a promise that resolves after the specified time.
@@ -198,29 +162,29 @@ async function doLogin(event) {
   if (event) event.preventDefault();
   let email = document.getElementById('email').value;
   let password = document.getElementById('password').value;
-  if (checkUserExist(email, password)) {
+  try {
+    const response = await postData('login', { email, password }, false);
+    const token = response.token;
+    const remember = document.getElementById('remember');
+    setToken(token, remember);
+    console.log('Token:', response);
     showLoginDialog();
     await sleep(3000);
     window.location.href = './templates/summary.html';
-  } else {
-    showLoginError();
+  } catch (error) {
+    console.error("Login fehlgeschlagen:", error.message);
+    showLoginError(error.message);
     return false;
   }
 }
 
-/**
- * Checks if a user with the provided email and password exists in the usersJson object.
- * @param {string} email - The email of the user to be checked.
- * @param {string} password - The password of the user to be checked.
- * @return {boolean} Returns true if a user with the given email and password exists, false otherwise.
- */
-function checkUserExist(email, password) {
-  for (let key in usersJson) {
-    let user = usersJson[key];
-    if (email === user.email && password === user.password) {
-      window.sessionStorage.setItem('userId', user.userId);
-      return true;
-    }
+function setToken(token, remember) {
+  if (remember.checked) {
+    localStorage.setItem('token', token);
+    console.log('Token gespeichert in Local Storage.');
+  } else {
+    sessionStorage.setItem('token', token);
+    console.log('Token gespeichert in Session Storage.');
   }
   return false;
 }

@@ -296,7 +296,7 @@ async function createNewTaskBoard(boardStatus, event) {
   let task = {
     title: document.getElementById("title").value,
     description: document.getElementById("description").value,
-    contact_ids: selectedContactIds, // Ändere dies von "contacts" zu "contact_ids"
+    user_ids: selectedContactIds,
     date: document.getElementById("date").value,
     priority: getSelectedPrio(),
     category: selectedCategory,
@@ -307,7 +307,7 @@ async function createNewTaskBoard(boardStatus, event) {
   taskAddedToBoard();
   setTimeout(async function () {
     resetUserDisplay();
-    await postData("tasks", task);
+    await postData("tasks", task, true);
     clearAllTasks(event);
     closeAddTaskBoard();
     updateHTML();

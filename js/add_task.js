@@ -326,7 +326,7 @@ async function createNewTask(event) {
   let task = {
     title: document.getElementById("title").value,
     description: document.getElementById("description").value,
-    contact_ids: selectedContactIds,
+    user_ids: selectedContactIds,
     date: document.getElementById("date").value,
     priority: getSelectedPrio(),
     category: selectedCategory,
@@ -337,7 +337,7 @@ async function createNewTask(event) {
   taskAddedToBoard();
   setTimeout(async function () {
     resetUserDisplay();
-    await postData("tasks", task);
+    await postData("tasks", task , true);
     location.href = "board.html";
     clearAllTasks(event);
   }, 3000);
