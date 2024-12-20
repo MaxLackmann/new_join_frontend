@@ -81,15 +81,19 @@ async function includeHTML() {
  * @return {undefined} This function does not return a value.
  */
 function focusSidebar() {
-  let currentPage = window.location.href.split('/').pop();
-  let menu = document.getElementById('mysidebar');
-  let links = menu.getElementsByTagName('a');
-  for (let i = 0; i < links.length; i++) {
-    let linkHref = links[i].getAttribute('href');
-    if (linkHref.replace('./', '') === currentPage.replace('?', '')) {
-      links[i].focus();
-      links[i].classList.add('active');
-      break;
+  const currentPage = window.location.href.split('/').pop();
+  const menu = document.getElementById('mysidebar');
+  const navItems = menu.querySelectorAll('.a-nav');
+
+  for (let navItem of navItems) {
+    const link = navItem.querySelector('a');
+    const linkHref = link.getAttribute('href').replace('./', '');
+
+    // Add "active" class if the link matches the current page, remove otherwise
+    if (linkHref === currentPage.replace('?', '')) {
+      navItem.classList.add('active');
+    } else {
+      navItem.classList.remove('active');
     }
   }
 }
@@ -100,18 +104,19 @@ function focusSidebar() {
  * @return {undefined} This function does not return a value.
  */
 function focusMobileSidebar() {
-  let currentPage = window.location.href.split('/').pop();
-  let mobileMenu = document.getElementById('mobile-menu');
-  let mobileLinks = mobileMenu.getElementsByTagName('a');
-  for (let i = 0; i < mobileLinks.length; i++) {
-    let linkHref = mobileLinks[i].getAttribute('href');
-    if (linkHref.replace('./', '') === currentPage.replace('?', '')) {
-      mobileLinks[i].focus();
-      mobileLinks[i].classList.add('active');
-      break;
+  const currentPage = window.location.href.split('/').pop();
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileLinks = [...mobileMenu.getElementsByTagName('a')];
+
+  mobileLinks.forEach(link => {
+    const linkHref = link.getAttribute('href').replace('./', '');
+    link.classList.toggle('active', linkHref === currentPage.replace('?', ''));
+    if (linkHref === currentPage.replace('?', '')) {
+      link.focus();
     }
-  }
+  });
 }
+
 
 /**
  * Asynchronously retrieves the user object from the 'users' data source based on the user token stored in the session storage.

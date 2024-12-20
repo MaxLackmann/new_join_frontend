@@ -4,11 +4,11 @@
  */
 async function initBoard() {
   includeHTML();
-  await contactsArray();
+  await usersArray();
   await tasksArray();
   await updateHTML();
   console.log(tasks);
-  console.log(contacts);
+  console.log(users);
 }
 
 let boardEdit = [];
@@ -93,10 +93,10 @@ function renderUserEmblems(task, container) {
   let renderedCount = 0;
   let extraCount = 0;
 
-  if (task.contacts && task.contacts.length > 0) {
-    for (let contact of task.contacts) {
+  if (task.user && task.user.length > 0) {
+    for (let user of task.user) {
       if (renderedCount < 5) {
-        container.innerHTML += renderSmallUsersEmblem(contact);
+        container.innerHTML += renderSmallUsersEmblem(user.user);
         renderedCount++;
       } else {
         extraCount++;
@@ -236,22 +236,6 @@ async function deleteTask(cardId) {
       await deleteData(`tasks/${task.cardId}`, true);
     }
   }
-}
-
-/**
- * Retrieves the selected user IDs from checkboxes in the '.contactlist' element.
- * @return {Array} An array of user IDs that are selected.
- */
-function getSelectedUserIds() {
-  let checkboxes = document.querySelectorAll(
-    '.contactlist input[type="checkbox"]:checked'
-  );
-  let selectedUserIds = [];
-  for (let checkbox of checkboxes) {
-    let userId = checkbox.getAttribute("data-userid");
-    selectedUserIds.push(userId);
-  }
-  return selectedUserIds;
 }
 
 /**
