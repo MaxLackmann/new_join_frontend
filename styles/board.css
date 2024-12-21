@@ -47,6 +47,7 @@
 
 .empty-board {
   display: flex;
+  justify-content: center;
   height: 48px;
   width: 240px;
   width: 100%;

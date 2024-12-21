@@ -299,16 +299,28 @@ function backMobileContListe() {
 }
 
 /**
- * Toggles the display of the "mobileMode" element. If the element is currently hidden, it will be displayed as a flex container. If it is already displayed, it will be hidden.
- * @return {void} This function does not return a value.
+ * Toggles the active state and dropdown menu of the mobile contact button.
+ * @param {HTMLElement} button - The button triggering the dropdown toggle.
  */
-function openMobileDialog() {
-  let mobileMode = document.getElementById("amobile_nameContact");
-  if (mobileMode != null) {
-    if (mobileMode.style.display == "none") {
-      mobileMode.style.display = "flex";
-    } else {
-      mobileMode.style.display = "none";
+function toggleActive(button) {
+  const mobileMode = document.getElementById("amobile_nameContact");
+  if (!mobileMode) return;
+  button.classList.toggle('active');
+  mobileMode.style.display = button.classList.contains('active') ? 'flex' : 'none';
+
+  function handleOutsideClick(event) {
+    if (!button.contains(event.target) && !mobileMode.contains(event.target)) {
+      button.classList.remove('active');
+      mobileMode.style.display = 'none';
+      document.removeEventListener('click', handleOutsideClick);
     }
+  }
+
+  if (button.classList.contains('active')) {
+    setTimeout(() => {
+      document.addEventListener('click', handleOutsideClick);
+    }, 0);
+  } else {
+    document.removeEventListener('click', handleOutsideClick);
   }
 }
