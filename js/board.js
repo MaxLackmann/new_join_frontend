@@ -149,11 +149,9 @@ function allowDrop(event) {
  */
 async function moveTo(event, status) {
   event.stopPropagation();
-  const task = tasks.find((t) => t.cardId == currentDraggedElement);
-  task.status = status;
-  removeHighlight(status);
-  console.log(task);
-  await patchData(`tasks/${task.cardId}`, task, true);
+  const taskId = currentDraggedElement;
+  
+  await patchData(`tasks/${taskId}`, { status: status }, true);
   await updateHTML();
 }
 
