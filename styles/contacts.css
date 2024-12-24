@@ -176,6 +176,12 @@
   position: relative;
 }
 
+.mobile-returnback img:hover {
+  cursor: pointer;
+  background-color: #d2d2d2;
+  border-radius: 50%;
+}
+
 .contact-details-header {
   display: flex;
   flex-direction: row;
