@@ -63,12 +63,6 @@
   line-height: 24px;
 }
 
-.inputfield-text-style {
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-}
-
 .button-guest {
   background-color: white;
   color: #2a3647;
@@ -529,6 +523,11 @@
   cursor: pointer;
 }
 
+.button-mobile-close img:hover {
+  cursor: pointer;
+  scale: 1.1;
+}
+
 .white-arrow {
   display: none;
   background-color: #2a3647;
@@ -737,9 +736,6 @@
     margin-bottom: 25px;
   }
 
-  .inputfield-text-style {
-    font-size: 18px;
-  }
 }
 
 @media (max-width: 710px) {
@@ -805,9 +801,6 @@
     margin: 12px 0px 12px 0px;
   }
 
-  .inputfield-text-style {
-    font-size: 14px;
-  }
 }
 
 @media (max-width: 395px) {

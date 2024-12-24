@@ -150,7 +150,7 @@ function allowDrop(event) {
 async function moveTo(event, status) {
   event.stopPropagation();
   const taskId = currentDraggedElement;
-  
+  removeHighlight(status);
   await patchData(`tasks/${taskId}`, { status: status }, true);
   await updateHTML();
 }
