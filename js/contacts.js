@@ -209,6 +209,7 @@ function closeDialog() {
   let dialog = document.getElementById("dialog");
   dialog.classList.add("d-none");
 }
+
 /**
  * Displays the details of a newly created contact.
  * @param {Object} newContact - The newly created contact object.

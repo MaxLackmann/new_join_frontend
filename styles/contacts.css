@@ -478,7 +478,8 @@
 }
 
 .button-close:hover {
-  background-color: #f0f0f0;
+  cursor: pointer;
+  background-color: #d2d2d2;
   border-radius: 50%;
 }
 

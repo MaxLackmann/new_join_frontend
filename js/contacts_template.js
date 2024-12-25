@@ -86,8 +86,8 @@ function renderContactDialog(title1, functionNew, btnText) {
   return /*html*/ `
   <div class="dialog">
   <div class="join-add-contact">
-  <button class="button-mobile-close" onclick="closeDialog()"><img class="imgBtns"
-    src="../assets/icons/closeWhite_icon.svg">
+  <button class="button-mobile-close" onclick="closeDialog()">
+    <img class="imgBtns" src="../assets/icons/closeWhite_icon.svg">
   </button>
     <img class="icon-join-contact" src="../assets/icons/joinWhite.svg">
     <div class="contact-details-title">${title1}</div>
@@ -97,8 +97,8 @@ function renderContactDialog(title1, functionNew, btnText) {
   <div class="edit-icon" id="iconContact"><img src="../assets/icons/person_icon.svg">
   </div>
   <div class="form-edit-style">
-    <button class="button-close" onclick="closeDialog()"><img class="button-images "
-        src="../assets/icons/cancel.svg"></button>
+    <button class="button-close" onclick="closeDialog()">
+      <img class="button-images" src="../assets/icons/cancel.svg"></button>
     <form class="add-contact-form" onsubmit=${functionNew}>
       <div class="group-contact-input">
         <input class="inputs-contact inputfield-text-style" type="text" id="nameContact"
