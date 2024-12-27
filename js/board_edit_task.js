@@ -260,7 +260,7 @@ function showPickedUsersEmblems(cardId) {
     }
     hiddenUserIds.clear();
     if (extraCount > 0) {
-      let hiddenUsers = task.userId.slice(5);
+      let hiddenUsers = task.user.slice(5);
       for (let userId of hiddenUsers) {
         hiddenUserIds.add(userId);
       }
@@ -401,7 +401,7 @@ async function updateEditBoard(cardId, updatedTask) {
   for (let key in tasksJSON) {
     let task = tasksJSON[key];
     if (task.cardId == cardId) {
-      await patchData(`tasks/${task.cardId}`, updatedTask);
+      await putData(`tasks/${task.cardId}`, updatedTask);
     }
   }
 }

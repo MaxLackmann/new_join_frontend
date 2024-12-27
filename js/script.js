@@ -52,6 +52,10 @@ async function usersArray() {
   }
 }
 
+function dontClose() {
+  event.stopPropagation();
+}
+
 /**
  * Asynchronously includes HTML content in elements with the attribute 'w3-include-html'.
  *
@@ -167,7 +171,7 @@ async function getGuestLogin(event) {
     if (response.token) {
       sessionStorage.setItem("token", response.token);
       sessionStorage.setItem("isGuest", "true");
-      localStorage.removeItem("token"); // 🚨 Stelle sicher, dass kein LocalStorage-Token stört
+      localStorage.removeItem("token"); // Stelle sicher, dass kein LocalStorage-Token stört
       location.href = "./templates/summary.html";
     } else {
       console.error("Gast-Login: Kein Token empfangen");
@@ -245,46 +249,46 @@ async function openSidebarRules() {
 }
 
 /**
- * 🚀 Validiert das Token direkt beim Seitenstart.
+ * Validiert das Token direkt beim Seitenstart.
  */
 async function validateTokenOnLoad() {
   const currentPage = window.location.pathname.split("/").pop();
   if (["index.html", "signUp.html"].includes(currentPage)) {
-    console.log('🚀 Token-Validierung übersprungen auf index.html oder signUp.html.');
+    console.log(' Token-Validierung übersprungen auf index.html oder signUp.html.');
     return;
   }
 
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   if (!token) {
-    console.warn('⚠️ Kein Token gefunden. Benutzer wird ausgeloggt.');
+    console.warn(' Kein Token gefunden. Benutzer wird ausgeloggt.');
     logout();
     return;
   }
 
   try {
-    console.log('🔄 Validierung des Tokens beim Seitenstart...');
+    console.log(' Validierung des Tokens beim Seitenstart...');
     const response = await fetch(BASE_URL + "validate-token/", {
       method: "GET", // Korrekt als GET-Request
       headers: getHeaders(true),
     });
 
     if (response.status === 401) {
-      console.warn('❌ Token ist ungültig oder abgelaufen. Benutzer wird ausgeloggt.');
+      console.warn(' Token ist ungültig oder abgelaufen. Benutzer wird ausgeloggt.');
       logout();
     } else if (response.ok) {
-      console.log('✅ Token ist gültig.');
+      console.log(' Token ist gültig.');
     } else {
-      console.warn('⚠️ Unerwartete Antwort bei der Token-Validierung:', response.status);
+      console.warn(' Unerwartete Antwort bei der Token-Validierung:', response.status);
     }
   } catch (error) {
-    console.error('❌ Fehler bei der Token-Validierung:', error.message);
+    console.error(' Fehler bei der Token-Validierung:', error.message);
     logout();
   }
 }
 
 setInterval(async () => {
   try {
-    // 🛑 Überprüfen, ob wir auf der index.html oder signUp.html sind
+    // Überprüfen, ob wir auf der index.html oder signUp.html sind
     const currentPage = window.location.pathname.split("/").pop();
     if (["index.html", "signUp.html"].includes(currentPage)) {
       for (let i = 0; i < 1000; i++) {
@@ -294,7 +298,7 @@ setInterval(async () => {
       return
     }
 
-    // 🟢 Token und Benutzerstatus prüfen
+    // Token und Benutzerstatus prüfen
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
     const isGuest = sessionStorage.getItem("isGuest") === "true";
@@ -310,7 +314,7 @@ setInterval(async () => {
       console.log("Ping wird als normaler Benutzer gesendet.");
     }
 
-    // 🟢 Zentraler Ping über postData
+    // Zentraler Ping über postData
     await postData("ping-activity", {}, true);
     console.log("Activity ping sent");
   } catch (error) {
@@ -320,10 +324,10 @@ setInterval(async () => {
 }, 0.1 * 60 * 1000); // Alle 6 Sekunden für Testzwecke
 
 /**
- * 🚪 Benutzer ausloggen und zur Login-Seite weiterleiten
+ * Benutzer ausloggen und zur Login-Seite weiterleiten
  */
 function logout() {
-  console.warn("⚠️ Token ungültig. Benutzer wird ausgeloggt.");
+  console.warn("Token ungültig. Benutzer wird ausgeloggt.");
   localStorage.removeItem("token");
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("isGuest");
