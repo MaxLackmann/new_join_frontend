@@ -9,8 +9,6 @@ async function initContact() {
   await loggedUser();
   sortContacts();
   renderListContact();
-  console.log(profile);
-  console.log(contacts);
 }
 
 /**
@@ -24,17 +22,16 @@ async function initContact() {
  */
 async function renderListContact() {
   let userContainer = document.getElementById("loggedUserContainer");
+  let listContact = document.getElementById("divList");
+
+  listContact.innerHTML = "";
   userContainer.innerHTML = "";
+
   if (profile && profile.username) {
-    console.log(profile);
     userContainer.innerHTML = renderUserContainerHTML(profile);
   }
   sortContacts();
-  renderContacts();
-}
-
-function renderUserContainerHTML(profile) {
-  return renderContainerHTML(profile, true, "user");
+  renderContactsWithoutUser(listContact);
 }
 
 /**
@@ -43,10 +40,7 @@ function renderUserContainerHTML(profile) {
  * @param {HTMLElement} listContact - The HTML element where the contacts will be rendered.
  * @param {Object} user - The user object to exclude from the rendering.
  */
-function renderContacts() {
-  let listContact = document.getElementById("divList");
-
-  listContact.innerHTML = "";
+function renderContactsWithoutUser(listContact) {
   let currentLetter = "";
   for (let i = 0; i < contacts.length; i++) {
     let contact = contacts[i];
@@ -58,25 +52,14 @@ function renderContacts() {
         <div class="contact-letter-header">${currentLetter}</div>
       `;
     }
-    console.log(contact);
-    listContact.innerHTML += renderListContactHTML(contact);
+    listContact.innerHTML += renderListContactHTML(contact, i);
   }
 }
 
 /**
- * Renders an HTML element representing a contact in the contact list.
- * @param {Object} contact - The contact object to render.
- * @return {string} The HTML string representing the contact in the contact list.
- */
-function renderListContactHTML(contact) {
-  return renderContainerHTML(contact, false, "contact");
-}
-
-
-/**
- * Handles the creation of a new contact.
- * @param {Event} event - The 'submit' event that triggered this function.
- * @return {Promise<void>} A promise that resolves when the contact is created and the contact list is updated.
+ * Creates a new contact and adds it to the contacts array.
+ * @param {Event} event - The event object for the form submission.
+ * @return {Promise<void>} - A promise that resolves when the new contact is added and saved to the server.
  */
 async function newContact(event) {
   event.preventDefault();
@@ -95,7 +78,7 @@ async function newContact(event) {
   sortContacts();
   await renderListContact();
   closeDialog();
-  showDetailContact(saveContact.id);
+  showDetails(saveContact.id);
   cleanContactControls();
   console.log(saveContact);
 }
@@ -105,21 +88,38 @@ async function newContact(event) {
  * @param {Event} event - Das Form-Event.
  * @param {number} index - Der Index des Kontakts im Array.
  */
-async function editContact(event, index) {
+async function editContact(event, id) {
   event.preventDefault();
+  const contactEdit = contacts.find((c) => c.id === id);
 
-  let contactEdit = contacts[index];
   contactEdit.name = document.getElementById("nameContact").value;
   contactEdit.email = document.getElementById("emailContact").value;
   contactEdit.phone = document.getElementById("phoneContact").value;
   contactEdit.emblem = renderEmblem(contactEdit.name);
-
+  console.log("Vor der Bearbeitung:", contactEdit);
+  console.log("Vor der Bearbeitung Profile:", profile);
   await putData(`contacts/${contactEdit.id}`, contactEdit, true);
   sortContacts();
   renderListContact();
-  showDetailContact(contactEdit.id);
+  showDetails(contactEdit.id, "contact");
   closeDialog();
   cleanContactControls();
+
+  console.log("Nach der Bearbeitung:", contactEdit);
+  console.log("Nach der Bearbeitung Profile:", profile);
+}
+
+/**
+ * Deletes the currently logged-in user from the server and redirects to the login page.
+ * @return {Promise<void>} A promise that resolves when the user is deleted and the redirect is complete.
+ */
+async function deleteUser(id) {
+  try {
+    if (profile.id == id) await deleteData(`users/${profile.id}`, true);
+    window.location.href = "../index.html";
+  } catch (error) {
+    console.error("Fehler beim Löschen des Benutzers:", error);
+  }
 }
 
 /**
@@ -127,19 +127,21 @@ async function editContact(event, index) {
  * deleting the contact from the server, and re-rendering the list of contacts.
  * @param {number} i - Der Index des Kontakts im Array.
  */
-async function deleteContact(i) {
-  let contactDelete = contacts[i];
-  contacts.splice(i, 1);
-  document.getElementById("divDetails").innerHTML = "";
-
+async function deleteContact(id) {
+  const contact = contacts.find((c) => c.id === id);
   try {
-    await deleteData(`contacts/${contactDelete.id}`, true);
+    await deleteData(`contacts/${contact.id}`, true);
+
+    const index = contacts.findIndex((c) => c.id === id);
+    if (index !== -1) contacts.splice(index, 1);
+    renderListContact();
   } catch (error) {
     console.error("Fehler beim Löschen des Kontakts:", error);
   }
-
-  sortContacts();
   renderListContact();
+  sortContacts();
+  closeDetailDialog();
+
   if (window.innerWidth <= 710) {
     backMobileContListe();
   }
@@ -189,21 +191,18 @@ function sortContacts() {
  * @param {number} id - The unique ID of the contact.
  * @return {void}
  */
-function showDetailContact(id) {
-  let contact = contacts.find((c) => c.id === id);
-  if (contact) {
-    removeSelectedClassFromAllContacts();
-    removeUserSelectedClass();
-    displayContactDetails(contact);
-    addSelectedClassToCurrentContact(id, "contact");
-  }
-}
+function showDetails(id, type) {
+  removeSelectedClassFromAllContacts();
 
-async function showDetailUser() {
-  if (profile) {
-    removeSelectedClassFromAllContacts();
-    displayContactDetails(profile);
-    addSelectedClassToCurrentContact(profile.id, "user");
+  if (profile.id == id && type == "profile") {
+    displayContactDetails(profile, type);
+    addSelectedClassToCurrentContact(id, "profile");
+  } else if (type == "contact") {
+    let contact = contacts.find((c) => c.id === id);
+    if (contact) {
+      displayContactDetails(contact, type);
+      addSelectedClassToCurrentContact(id, "contact");
+    }
   }
 }
 
@@ -220,82 +219,110 @@ function removeSelectedClassFromAllContacts() {
     let container = allContactContainers[i];
     container.classList.remove("contact-list-container-selected");
   }
-}
-
-function removeUserSelectedClass() {
   let userContainer = document.getElementById("loggedUserContainer");
   userContainer.classList.remove("contact-list-container-selected");
 }
 
-async function addSelectedClassToCurrentContact(id, type = "contact") {
-  removeSelectedClassFromAllContacts();
-
-  if (type === "user") {
-    let userContainer = document.getElementById(`loggedUserContainer`);
-    if (userContainer) {
-      userContainer.classList.add("contact-list-container-selected");
-    }
+/**
+ * Adds the 'contact-list-container-selected' class to the currently selected contact.
+ * @param {number} id - The unique ID of the contact.
+ * @return {void}
+ */
+async function addSelectedClassToCurrentContact(id, type) {
+  if (type === "profile") {
+    let userContainer = document.getElementById("loggedUserContainer");
+    userContainer.classList.add("contact-list-container-selected");
   } else if (type === "contact") {
-    let contactContainer = document.getElementById(`contact-${id}`);
-    if (contactContainer) {
-      contactContainer.classList.add("contact-list-container-selected");
-    }
+    let contactListContainer = document.getElementById(`contact-${id}`);
+    contactListContainer.classList.add("contact-list-container-selected");
   }
 }
 
 /**
- * Displays the details of the selected contact.
- * @param {object} contact - The contact object to display.
- * @return {void}
+ * Displays the details of a contact or profile.
+ * @param {object} detail - The detail object (profile or contact).
+ * @param {string} type - The type ('profile' or 'contact').
  */
-function displayContactDetails(contact) {
+function displayContactDetails(detail, type) {
   let infoContact = document.getElementById("divDetails");
   infoContact.innerHTML = "";
   infoContact.classList.remove("move-left");
   infoContact.offsetWidth;
   infoContact.classList.add("move-left");
-  infoContact.innerHTML += renderContactinList(contact);
+
+  infoContact.innerHTML += renderDetailsHTML(detail, type);
   mobileDetails();
 }
 
-function openAddContactDialog() {
-  openDialog("add");
-}
-
-function openEditContactDialog() {
-  openDialog("edit");
+/**
+ * Generates actions based on the detail type.
+ * @param {string} type - Type of detail ('profile' or 'contact').
+ * @param {number} id - ID of the detail.
+ * @returns {object} Object containing 'edit' and 'delete' actions.
+ */
+function getDetailActions(type, id) {
+  if (type === "profile") {
+    return {
+      edit: `openProfileDialog()`,
+      delete: `deleteProfile(${id})`,
+      infoTitle: "Profile Information"
+    };
+  } else if (type === "contact") {
+    return {
+      edit: `openEditContactDialog(${id})`,
+      delete: `deleteContact(${id})`,
+      infoTitle: "Contact Information"
+    };
+  }
 }
 
 /**
- * Opens the dialog box.
- * @param {string} mode - 'add' für einen neuen Kontakt, 'edit' für einen bestehenden Kontakt.
- * @param {number} [index] - Der Index des Kontakts im Array (nur für 'edit' Modus).
+ * Opens a dialog to add a new contact.
  */
-function openDialog(mode, index = null) {
+function openAddContactDialog() {
   let dialog = document.getElementById("dialog");
   let dialogContent = document.getElementById("dialogContent");
 
   dialog.classList.remove("d-none");
-  dialogContent.innerHTML = "";
+  dialogContent.innerHTML = renderAddContactDialog();
+}
 
-  if (mode === "edit" && index !== null) {
-    const contact = contacts[index];
-    dialogContent.innerHTML = renderContactDialog("edit", contact, index);
-  } else {
-    dialogContent.innerHTML = renderContactDialog("add");
+/**
+ * Opens a dialog to edit the user profile.
+ */
+function openProfileDialog() {
+  let dialog = document.getElementById("dialog");
+  let dialogContent = document.getElementById("dialogContent");
+
+  dialog.classList.remove("d-none");
+  dialogContent.innerHTML = renderProfileDialog(profile);
+}
+
+/**
+ * Opens a dialog to edit an existing contact.
+ * @param {number} contactId - The ID of the contact to edit.
+ */
+function openEditContactDialog(id) {
+  let dialog = document.getElementById("dialog");
+  let dialogContent = document.getElementById("dialogContent");
+
+  const contact = contacts.find((c) => c.id === id);
+
+  if (!contact) {
+    console.error(`Contact with ID ${contactId} not found.`);
+    return;
   }
+
+  dialog.classList.remove("d-none");
+  dialogContent.innerHTML = renderContactDialog(contact);
 }
 
 /**
  * Closes the dialog box.
  * @return {void} This function does not return anything.
  */
-function closeDialog() {
-  let mobileMode = document.getElementById("amobile_nameContact");
-  if (mobileMode != null && mobileMode.style.display == "flex") {
-    mobileMode.style.display = "none";
-  }
-  let dialog = document.getElementById("dialog");
+function closeDetailDialog() {
+  let dialog = document.getElementById("divDetails");
   dialog.classList.add("d-none");
 }
 
@@ -317,7 +344,7 @@ function showNewContactDetails(newContact) {
  * Displays the details of a newly created contact.
  * Iterates over the contacts array and finds the index of the newly created contact.
  * Clears the innerHTML of the contact details div, removes the 'move-left' class,
- * renders the contact using renderContactinList and adds the rendered HTML to the div,
+ * renders the contact using renderDetailsHTML and adds the rendered HTML to the div,
  * and calls the mobileDetails function.
  * @param {Object} newContact - The newly created contact object.
  * @return {void} This function does not return a value.
@@ -328,7 +355,7 @@ function displayNewContactDetails(newContact) {
       let infoContact = document.getElementById("divDetails");
       infoContact.innerHTML = " ";
       infoContact.classList.remove("move-left");
-      infoContact.innerHTML += renderContactinList(i);
+      infoContact.innerHTML += renderDetailsHTML(i);
       mobileDetails();
     }
   }
