@@ -3,15 +3,23 @@
  * @param {object} contact - The contact object to render.
  * @return {string} The HTML string representing the contact list item.
  */
-function renderListContactHTML(contact) {
+function renderContainerHTML(contact, isCurrentUser = false, containerType = "contact") {
   return /*html*/ `
-    <div id="contact-${contact.id}" class="contact-list-container" onclick="showDetailContact(${contact.id})">
+    <div id="${containerType}-${contact.id}" 
+         class="${containerType === "user" ? "logged-user" : "contact-list-container"} ${
+           isCurrentUser ? "current-user" : ""
+         }" onclick="showDetailContact(${contact.id})">
       <div class="contact-emblem" style="background-color: ${contact.color}">
-        ${renderEmblem(contact.name)}
+        ${contact.emblem}
       </div>
-      <div class="contact-info-container">
-        <p>${contact.name}</p>
-        <a>${contact.email}</a>
+      <div class="${containerType === "user" ? "user-name" : "contact-info-container"}">
+        ${containerType === "user" ? `
+          <p class="current-user-text">Current User</p>
+          <p>${contact.username}</p>
+        ` : `
+          <p>${contact.name}</p>
+          <a>${contact.email}</a>
+        `}
       </div>
     </div>
   `;
@@ -20,50 +28,66 @@ function renderListContactHTML(contact) {
 /**
  * Renders detailed view of a contact.
  * @param {object} contact - Das Kontaktobjekt.
- * @return {string} Das HTML für die Detailansicht.
+ * @return {string} Das HTML f端r die Detailansicht.
  */
 function renderContactinList(contact) {
   return /*html*/ `
     <div class="headline-contact">
       <div class="emblem-info-container">
-        <div class="emblem-info" id="emblem" style="background-color: ${contact.color}">${contact.emblem}</div>
-        <div class="name-contact">
-          <p id="name_contact">${contact.name}</p>
-          <div class="a-name-contact" id="a_nameContact">
-            <a class="dflex-align-center" onclick="openDialog('edit', ${contacts.indexOf(contact)})">
-              <img class="img-btns" src="../assets/icons/edit-contacts_icon.svg"> Edit
-            </a>
-            <a class="dflex-align-center" onclick="deleteContact(${contacts.indexOf(contact)})">
-              <img class="img-btns" src="../assets/icons/delete_contact_icon.svg"> Delete
-            </a>
+        <div class="emblem-container">
+          <div class="emblem-info" id="emblem" style="background-color: 
+            ${contact.color}">${contact.emblem}
+          </div>
+          <div class="name-contact">
+            <p id="name_contact">${contact.name || contact.username}</p>
+            <div class="a-name-contact" id="a_nameContact">
+              <a class="dflex-align-center" onclick="openDialog('edit', ${contacts.indexOf(contact)})">
+                <img class="img-btns" src="../assets/icons/edit-contacts_icon.svg"> Edit
+              </a>
+              <a class="dflex-align-center" onclick="deleteContact(${contacts.indexOf(contact)})">
+                <img class="img-btns" src="../assets/icons/delete_contact_icon.svg"> Delete
+              </a>
+            </div>
           </div>
         </div>
+      <div class="mobile-contact">
+        <div class="three-dots-button" onclick="toggleActive(this)">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="mobile-dropdown-menu" id="amobile_nameContact" style="display:none">
+          <a class="dflex-align-center" onclick="openDialog('edit', ${contacts.indexOf(contact)})">
+          <img class="img-btns" src="../assets/icons/edit-contacts_icon.svg"> Edit</a>
+          <a class="dflex-align-center" onclick="deleteContact(${contacts.indexOf(contact)})">
+          <img class="img-btns" src="../assets/icons/delete_contact_icon.svg"> Delete</a>
+        </div>
       </div>
-      <div class="info">Contact Information</div>
+    </div>
+    <div class="info">Contact Information</div>
       <div class="contact-information">
         <div><b>Email</b></div>
         <a id="email_contact">${contact.email}</a>
         <div><b>Phone</b></div>
         <div id="phone_contact">${contact.phone}</div>
       </div>
-    </div>
   `;
 }
 
 /**
  * Renders a contact dialog for adding or editing a contact.
  * @param {string} mode - 'add' oder 'edit'.
- * @param {object} [contact] - Das Kontaktobjekt (nur für 'edit' Modus).
- * @param {number} [index] - Der Index des Kontakts (nur für 'edit' Modus).
- * @return {string} Das HTML für den Dialog.
+ * @param {object} [contact] - Das Kontaktobjekt (nur f端r 'edit' Modus).
+ * @param {number} [index] - Der Index des Kontakts (nur f端r 'edit' Modus).
+ * @return {string} Das HTML f端r den Dialog.
  */
 function renderContactDialog(mode, contact = {}, index = null) {
-  const isEditMode = mode === 'edit';
-  const title = isEditMode ? 'Edit Contact' : 'Add Contact';
-  const submitHandler = isEditMode 
-    ? `editContact(event, ${index})` 
-    : 'newContact(event)';
-  
+  const isEditMode = mode === "edit";
+  const title = isEditMode ? "Edit Contact" : "Add Contact";
+  const submitHandler = isEditMode
+    ? `editContact(event, ${index})`
+    : "newContact(event)";
+
   return /*html*/ `
   <div class="dialog">
     <div class="join-add-contact">
@@ -80,15 +104,15 @@ function renderContactDialog(mode, contact = {}, index = null) {
       <form class="add-contact-form" onsubmit="${submitHandler}">
         <div class="group-contact-input">
           <input class="inputs-contact inputfield-text-style" type="text" id="nameContact"
-            placeholder="Name" value="${contact.name || ''}" required/>
+            placeholder="Name" value="${contact.name || ""}" required/>
           <input class="inputs-contact inputfield-text-style" type="email" id="emailContact"
-            placeholder="Email" value="${contact.email || ''}" required/>
+            placeholder="Email" value="${contact.email || ""}" required/>
           <input class="inputs-contact inputfield-text-style" type="tel" id="phoneContact"
-            placeholder="Phone" value="${contact.phone || ''}" required/>
+            placeholder="Phone" value="${contact.phone || ""}" required/>
           <div class="form-button">
             <button class="button-guest button-text-style" type="button" onclick="closeDialog()">Cancel</button>
             <button class="add-contact-button-mobile button-text-style" type="submit">
-              ${isEditMode ? 'Save' : 'Create'}
+              ${isEditMode ? "Save" : "Create"}
               <img class="button-images" src="../assets/icons/checkWhite.svg">
             </button>
           </div>

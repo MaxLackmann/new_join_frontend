@@ -6,18 +6,65 @@
 async function initContact() {
   await includeHTML();
   await contactsArray();
+  await loggedUser();
   sortContacts();
   renderListContact();
+  console.log(profile);
   console.log(contacts);
 }
 
-function renderListContact() {
-  let listContact = document.getElementById("divList");
-  listContact.innerHTML = "";
-  for (let i = 0; i < contacts.length; i++) {
-    contact = contacts[i];
-    listContact.innerHTML += renderListContactHTML(contact, i);
+/**
+ * Renders the list of contacts asynchronously.
+ * 1. Retrieves the user object.
+ * 2. Clears the innerHTML of the user container and the list contact container.
+ * 3. If the user is logged in, renders the user container with the 'current-user' class.
+ * 4. Sorts the contacts array by name.
+ * 5. Calls renderContactsWithoutUser to render the list of contacts.
+ * @return {Promise<void>} A promise that resolves when the rendering is complete.
+ */
+async function renderListContact() {
+  let userContainer = document.getElementById("loggedUserContainer");
+  userContainer.innerHTML = "";
+  if (profile && profile.username) {
+    console.log(profile);
+    userContainer.innerHTML = renderUserContainerHTML(profile);
   }
+  sortContacts();
+  renderContacts();
+}
+
+function renderUserContainerHTML(profile) {
+  return renderContainerHTML(profile, true, "user");
+}
+
+/**
+ * Renders contacts in the list excluding the specified user, grouping them by the first letter
+ * of their name. If the first letter changes, a header is added to the list.
+ * @param {HTMLElement} listContact - The HTML element where the contacts will be rendered.
+ * @param {Object} user - The user object to exclude from the rendering.
+ */
+function renderContacts() {
+  let listContact = document.getElementById("divList");
+
+  listContact.innerHTML = "";
+  let currentLetter = "";
+  for (let i = 0; i < contacts.length; i++) {
+    let contact = contacts[i];
+  
+    let firstLetter = contact.name.charAt(0).toUpperCase();
+    if (firstLetter !== currentLetter) {
+      currentLetter = firstLetter;
+      listContact.innerHTML += `
+        <div class="contact-letter-header">${currentLetter}</div>
+      `;
+    }
+    console.log(contact);
+    listContact.innerHTML += renderListContactHTML(contact);
+  }
+}
+
+function renderListContactHTML (contact) {
+  return renderContainerHTML(contact, false, "contact");
 }
 
 /**
@@ -40,11 +87,11 @@ async function newContact(event) {
   let saveContact = await postData("contacts", newContact, true);
   contacts.push(saveContact);
   sortContacts();
-  renderListContact();
+  await renderListContact();
   closeDialog();
   showDetailContact(saveContact.id);
   cleanContactControls();
-  console.log(contact);
+  console.log(saveContact);
 }
 
 /**
@@ -87,8 +134,6 @@ async function deleteContact(i) {
 
   sortContacts();
   renderListContact();
-   // Kontakte nach dem Löschen sortieren
-
   if (window.innerWidth <= 710) {
     backMobileContListe();
   }
@@ -100,7 +145,7 @@ async function deleteContact(i) {
  * @return {string} The generated emblem.
  */
 function renderEmblem(name) {
-  let aux = name.split(" ");
+  let aux = name.split(" ");  
   let capital = "";
   for (let j = 0; j < aux.length; j++) {
     if (j <= 1) {
@@ -121,14 +166,15 @@ function colorRandom() {
 }
 
 /**
- * Sorts the contacts array in ascending order based on the contact's name.
+ * Sorts the contacts array alphabetically by name and groups them by the first letter.
+ * Adds a property 'group' to each contact representing the first letter of their name.
  * @return {void} This function does not return anything.
  */
 function sortContacts() {
-  contacts = contacts.sort((a, b) => {
-    if (a.name > b.name) return 1;
-    if (a.name < b.name) return -1;
-    return 0;
+  contacts.sort((a, b) => a.name.localeCompare(b.name));
+
+  contacts.forEach(contact => {
+    contact.group = contact.name.charAt(0).toUpperCase();
   });
 }
 
@@ -138,14 +184,21 @@ function sortContacts() {
  * @return {void}
  */
 function showDetailContact(id) {
+  if (profile.id == id);
   let contact = contacts.find((c) => c.id === id);
   if (contact) {
     removeSelectedClassFromAllContacts();
-    addSelectedClassToCurrentContact(id);
     displayContactDetails(contact);
-  } else {
-    console.error(`Contact with ID ${id} not found.`);
-  }
+    addSelectedClassToCurrentContact(id);
+  } 
+}
+
+async function showDetailUser() {
+  if (profile) {
+    removeSelectedClassFromAllContacts();
+    displayContactDetails(profile);
+    addSelectedClassToCurrentContact(profile.id);
+  } 
 }
 
 /**
@@ -154,13 +207,13 @@ function showDetailContact(id) {
  * @return {void} This function does not return anything.
  */
 function removeSelectedClassFromAllContacts() {
-  let allContactContainers = document.querySelectorAll(
-    ".contact-list-container"
-  );
+  let allContactContainers = document.querySelectorAll(".contact-list-container");
   for (let i = 0; i < allContactContainers.length; i++) {
     let container = allContactContainers[i];
     container.classList.remove("contact-list-container-selected");
   }
+  let userContainer = document.getElementById("loggedUserContainer");
+  userContainer.classList.remove("contact-list-container-selected");
 }
 
 /**
@@ -168,12 +221,14 @@ function removeSelectedClassFromAllContacts() {
  * @param {number} id - The unique ID of the contact.
  * @return {void}
  */
-function addSelectedClassToCurrentContact(id) {
-  let contactListContainer = document.getElementById(`contact-${id}`);
-  if (contactListContainer) {
+async function addSelectedClassToCurrentContact(id) {
+  // let user = await loadData("user");
+  if (profile.id == id) {
+    let userContainer = document.getElementById("loggedUserContainer");
+    userContainer.classList.add("contact-list-container-selected");
+  } else if (contacts.find((c) => c.id === id)) {
+    let contactListContainer = document.getElementById(`contact-${id}`);
     contactListContainer.classList.add("contact-list-container-selected");
-  } else {
-    console.error(`Container for contact ID ${id} not found.`);
   }
 }
 
@@ -186,7 +241,7 @@ function displayContactDetails(contact) {
   let infoContact = document.getElementById("divDetails");
   infoContact.innerHTML = "";
   infoContact.classList.remove("move-left");
-  infoContact.offsetWidth; // Force reflow for animation
+  infoContact.offsetWidth; 
   infoContact.classList.add("move-left");
   infoContact.innerHTML += renderContactinList(contact);
   mobileDetails();
@@ -209,8 +264,8 @@ function openDialog(mode, index = null) {
   let dialog = document.getElementById("dialog");
   let dialogContent = document.getElementById("dialogContent");
 
-  dialog.classList.remove("d-none"); // Dialog anzeigen
-  dialogContent.innerHTML = ""; // Dialog-Inhalt zurücksetzen
+  dialog.classList.remove("d-none"); 
+  dialogContent.innerHTML = ""; 
 
   if (mode === "edit" && index !== null) {
     const contact = contacts[index];
@@ -241,18 +296,31 @@ function closeDialog() {
 function showNewContactDetails(newContact) {
   closeDialog();
   cleanContactControls();
-  renderListContact();
+  renderListContact();  
+  displayNewContactDetails(newContact);
   document.getElementById("contactCreated").classList.remove("d-none");
+  contactCreatedDiv();  
+}
+
+/**
+ * Displays the details of a newly created contact.
+ * Iterates over the contacts array and finds the index of the newly created contact.
+ * Clears the innerHTML of the contact details div, removes the 'move-left' class,
+ * renders the contact using renderContactinList and adds the rendered HTML to the div,
+ * and calls the mobileDetails function.
+ * @param {Object} newContact - The newly created contact object.
+ * @return {void} This function does not return a value.
+ */
+function displayNewContactDetails(newContact) {
   for (let i = 0; i < contacts.length; i++) {
     if (newContact.name == contacts[i].name) {
       let infoContact = document.getElementById("divDetails");
-      infoContact.innerHTML = " ";
-      infoContact.classList.remove("move-left");
-      infoContact.innerHTML += renderContactinList(i);
-      mobileDetails();
+      infoContact.innerHTML = " "; 
+      infoContact.classList.remove("move-left"); 
+      infoContact.innerHTML += renderContactinList(i); 
+      mobileDetails(); 
     }
   }
-  contactCreatedDiv();
 }
 
 /**
@@ -330,9 +398,7 @@ function toggleActive(button) {
   const mobileMode = document.getElementById("amobile_nameContact");
   if (!mobileMode) return;
   button.classList.toggle("active");
-  mobileMode.style.display = button.classList.contains("active")
-    ? "flex"
-    : "none";
+  mobileMode.style.display = button.classList.contains("active") ? "flex" : "none";
 
   function handleOutsideClick(event) {
     if (!button.contains(event.target) && !mobileMode.contains(event.target)) {

@@ -269,6 +269,12 @@
   gap: 12px;
 }
 
+.emblem-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .emblem-info {
   width: 120px;
   height: 120px;
@@ -758,6 +764,10 @@
 
   .mobile-returnback {
     display: flex;
+  }
+  
+  .emblem-info-container {
+    justify-content: space-between;
   }
 
   .mobile-contact {
