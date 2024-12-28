@@ -50,7 +50,7 @@ function renderContacts() {
   let currentLetter = "";
   for (let i = 0; i < contacts.length; i++) {
     let contact = contacts[i];
-  
+
     let firstLetter = contact.name.charAt(0).toUpperCase();
     if (firstLetter !== currentLetter) {
       currentLetter = firstLetter;
@@ -63,14 +63,20 @@ function renderContacts() {
   }
 }
 
-function renderListContactHTML (contact) {
+/**
+ * Renders an HTML element representing a contact in the contact list.
+ * @param {Object} contact - The contact object to render.
+ * @return {string} The HTML string representing the contact in the contact list.
+ */
+function renderListContactHTML(contact) {
   return renderContainerHTML(contact, false, "contact");
 }
 
+
 /**
- * Creates a new contact and adds it to the contacts array.
- * @param {Event} event - The event object for the form submission.
- * @return {Promise<void>} - A promise that resolves when the new contact is added and saved to the server.
+ * Handles the creation of a new contact.
+ * @param {Event} event - The 'submit' event that triggered this function.
+ * @return {Promise<void>} A promise that resolves when the contact is created and the contact list is updated.
  */
 async function newContact(event) {
   event.preventDefault();
@@ -145,7 +151,7 @@ async function deleteContact(i) {
  * @return {string} The generated emblem.
  */
 function renderEmblem(name) {
-  let aux = name.split(" ");  
+  let aux = name.split(" ");
   let capital = "";
   for (let j = 0; j < aux.length; j++) {
     if (j <= 1) {
@@ -173,7 +179,7 @@ function colorRandom() {
 function sortContacts() {
   contacts.sort((a, b) => a.name.localeCompare(b.name));
 
-  contacts.forEach(contact => {
+  contacts.forEach((contact) => {
     contact.group = contact.name.charAt(0).toUpperCase();
   });
 }
@@ -184,21 +190,21 @@ function sortContacts() {
  * @return {void}
  */
 function showDetailContact(id) {
-  if (profile.id == id);
   let contact = contacts.find((c) => c.id === id);
   if (contact) {
     removeSelectedClassFromAllContacts();
+    removeUserSelectedClass();
     displayContactDetails(contact);
-    addSelectedClassToCurrentContact(id);
-  } 
+    addSelectedClassToCurrentContact(id, "contact");
+  }
 }
 
 async function showDetailUser() {
   if (profile) {
     removeSelectedClassFromAllContacts();
     displayContactDetails(profile);
-    addSelectedClassToCurrentContact(profile.id);
-  } 
+    addSelectedClassToCurrentContact(profile.id, "user");
+  }
 }
 
 /**
@@ -207,28 +213,33 @@ async function showDetailUser() {
  * @return {void} This function does not return anything.
  */
 function removeSelectedClassFromAllContacts() {
-  let allContactContainers = document.querySelectorAll(".contact-list-container");
+  let allContactContainers = document.querySelectorAll(
+    ".contact-list-container"
+  );
   for (let i = 0; i < allContactContainers.length; i++) {
     let container = allContactContainers[i];
     container.classList.remove("contact-list-container-selected");
   }
+}
+
+function removeUserSelectedClass() {
   let userContainer = document.getElementById("loggedUserContainer");
   userContainer.classList.remove("contact-list-container-selected");
 }
 
-/**
- * Adds the 'contact-list-container-selected' class to the currently selected contact.
- * @param {number} id - The unique ID of the contact.
- * @return {void}
- */
-async function addSelectedClassToCurrentContact(id) {
-  // let user = await loadData("user");
-  if (profile.id == id) {
-    let userContainer = document.getElementById("loggedUserContainer");
-    userContainer.classList.add("contact-list-container-selected");
-  } else if (contacts.find((c) => c.id === id)) {
-    let contactListContainer = document.getElementById(`contact-${id}`);
-    contactListContainer.classList.add("contact-list-container-selected");
+async function addSelectedClassToCurrentContact(id, type = "contact") {
+  removeSelectedClassFromAllContacts();
+
+  if (type === "user") {
+    let userContainer = document.getElementById(`loggedUserContainer`);
+    if (userContainer) {
+      userContainer.classList.add("contact-list-container-selected");
+    }
+  } else if (type === "contact") {
+    let contactContainer = document.getElementById(`contact-${id}`);
+    if (contactContainer) {
+      contactContainer.classList.add("contact-list-container-selected");
+    }
   }
 }
 
@@ -241,7 +252,7 @@ function displayContactDetails(contact) {
   let infoContact = document.getElementById("divDetails");
   infoContact.innerHTML = "";
   infoContact.classList.remove("move-left");
-  infoContact.offsetWidth; 
+  infoContact.offsetWidth;
   infoContact.classList.add("move-left");
   infoContact.innerHTML += renderContactinList(contact);
   mobileDetails();
@@ -264,8 +275,8 @@ function openDialog(mode, index = null) {
   let dialog = document.getElementById("dialog");
   let dialogContent = document.getElementById("dialogContent");
 
-  dialog.classList.remove("d-none"); 
-  dialogContent.innerHTML = ""; 
+  dialog.classList.remove("d-none");
+  dialogContent.innerHTML = "";
 
   if (mode === "edit" && index !== null) {
     const contact = contacts[index];
@@ -296,10 +307,10 @@ function closeDialog() {
 function showNewContactDetails(newContact) {
   closeDialog();
   cleanContactControls();
-  renderListContact();  
+  renderListContact();
   displayNewContactDetails(newContact);
   document.getElementById("contactCreated").classList.remove("d-none");
-  contactCreatedDiv();  
+  contactCreatedDiv();
 }
 
 /**
@@ -315,10 +326,10 @@ function displayNewContactDetails(newContact) {
   for (let i = 0; i < contacts.length; i++) {
     if (newContact.name == contacts[i].name) {
       let infoContact = document.getElementById("divDetails");
-      infoContact.innerHTML = " "; 
-      infoContact.classList.remove("move-left"); 
-      infoContact.innerHTML += renderContactinList(i); 
-      mobileDetails(); 
+      infoContact.innerHTML = " ";
+      infoContact.classList.remove("move-left");
+      infoContact.innerHTML += renderContactinList(i);
+      mobileDetails();
     }
   }
 }
@@ -398,7 +409,9 @@ function toggleActive(button) {
   const mobileMode = document.getElementById("amobile_nameContact");
   if (!mobileMode) return;
   button.classList.toggle("active");
-  mobileMode.style.display = button.classList.contains("active") ? "flex" : "none";
+  mobileMode.style.display = button.classList.contains("active")
+    ? "flex"
+    : "none";
 
   function handleOutsideClick(event) {
     if (!button.contains(event.target) && !mobileMode.contains(event.target)) {

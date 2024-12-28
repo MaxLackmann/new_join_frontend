@@ -4,11 +4,14 @@
  * @return {string} The HTML string representing the contact list item.
  */
 function renderContainerHTML(contact, isCurrentUser = false, containerType = "contact") {
+  const onclickEvent = containerType === "user"
+    ? `showDetailUser()`
+    : `showDetailContact(${contact.id})`;
   return /*html*/ `
     <div id="${containerType}-${contact.id}" 
          class="${containerType === "user" ? "logged-user" : "contact-list-container"} ${
            isCurrentUser ? "current-user" : ""
-         }" onclick="showDetailContact(${contact.id})">
+         }" onclick="${onclickEvent}">
       <div class="contact-emblem" style="background-color: ${contact.color}">
         ${contact.emblem}
       </div>
