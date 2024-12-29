@@ -73,14 +73,17 @@ async function newContact(event) {
     color: colorRandom()
   };
 
-  let saveContact = await postData("contacts", newContact, true);
-  contacts.push(saveContact);
-  sortContacts();
-  await renderListContact();
-  closeDialog();
-  showDetails(saveContact.id, "contact");
-  cleanContactControls();
-  console.log(saveContact);
+  try {
+    let saveContact = await postData("contacts", newContact, true);
+    contacts.push(saveContact);
+    sortContacts();
+    await renderListContact();
+    closeDialog();
+    showDetails(saveContact.id, "contact");
+    cleanContactControls();
+  } catch (error) {
+    showError(error);
+  }
 }
 
 /**
@@ -97,12 +100,16 @@ async function editContact(event, id) {
   contactEdit.email = document.getElementById("emailContact").value;
   contactEdit.phone = document.getElementById("phoneContact").value;
   contactEdit.emblem = renderEmblem(contactEdit.name);
-  await putData(`contacts/${contactEdit.id}`, contactEdit, true);
-  sortContacts();
-  renderListContact();
-  showDetails(contactEdit.id, "contact");
-  closeDialog();
-  cleanContactControls();
+  try {
+    await putData(`contacts/${contactEdit.id}`, contactEdit, true);
+    sortContacts();
+    renderListContact();
+    showDetails(contactEdit.id, "contact");
+    closeDialog();
+    cleanContactControls();
+  } catch (error) {
+    showError(error);
+  }
 }
 
 /**
@@ -128,7 +135,7 @@ async function editProfile(event) {
     showDetails(profile.id, "profile");
     closeDialog();
   } catch (error) {
-    console.error("Fehler beim Bearbeiten des Benutzers:", error);
+    showError(error);
   }
 }
 
@@ -184,6 +191,17 @@ function renderEmblem(name) {
     }
   }
   return capital;
+}
+
+function showError(error) {
+  let divError = document.getElementById("divError");
+  divError.classList.remove("d-none");
+
+  divError.innerHTML = `
+    <div class="error">
+      <p>${error}.</p>
+    </div
+  `;
 }
 
 /**
