@@ -54,7 +54,9 @@ function renderDetailsHTML(detail, type) {
     <div class="headline-contact">
       <div class="emblem-info-container">
         <div class="emblem-container">
-          <div class="emblem-info" id="emblem" style="background-color: ${detail.color}">
+          <div class="emblem-info" id="emblem" style="background-color: ${
+            detail.color
+          }">
             ${detail.emblem}
           </div>
           <div class="name-contact">
@@ -113,12 +115,17 @@ function renderProfileDialog(profile) {
       <div id="textAdd" class="add-text">Update your personal information</div>
       <div class="seperator-add"></div>
     </div>
+
+    <div class="emblem-info" id="emblem" style="background-color: ${profile.color}">
+      ${profile.emblem}
+    </div>
+    
     <div class="form-edit-style">
-      <form class="add-contact-form" onsubmit="editUser(event, ${profile.id})">
+      <form class="add-contact-form" onsubmit="editProfile(event, ${profile.id})">
         <div class="group-contact-input">
-          <input class="inputs-contact inputfield-text-style" type="text" id="username" placeholder="Username" value="${profile.username}" required />
-          <input class="inputs-contact inputfield-text-style" type="email" id="email" placeholder="Email" value="${profile.email}" required />
-          <input class="inputs-contact inputfield-text-style" type="tel" id="phone" placeholder="Phone" value="${profile.phone}" required />
+          <input class="inputs-contact inputfield-text-style" type="text" id="nameProfile" placeholder="Username" value="${profile.username}" required />
+          <input class="inputs-contact inputfield-text-style" type="email" id="emailProfile" placeholder="Email" value="${profile.email}" required />
+          <input class="inputs-contact inputfield-text-style" type="tel" id="phoneProfile" placeholder="Phone" value="${profile.phone}" required />
           <div class="form-button">
             <button class="button-guest button-text-style" type="button" onclick="closeDialog()">Cancel</button>
             <button class="add-contact-button-mobile button-text-style" type="submit">Save</button>
@@ -148,6 +155,11 @@ function renderContactDialog(contact) {
       <div id="textAdd" class="add-text">Update personal information</div>
       <div class="seperator-add"></div>
     </div>
+
+    <div class="emblem-info" id="emblem" style="background-color: ${contact.color}">
+      ${contact.emblem}
+    </div>
+
     <div class="form-edit-style">
       <form class="add-contact-form" onsubmit="editContact(event, ${contact.id})">
         <div class="group-contact-input">

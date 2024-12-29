@@ -78,7 +78,7 @@ async function newContact(event) {
   sortContacts();
   await renderListContact();
   closeDialog();
-  showDetails(saveContact.id);
+  showDetails(saveContact.id, "contact");
   cleanContactControls();
   console.log(saveContact);
 }
@@ -92,33 +92,57 @@ async function editContact(event, id) {
   event.preventDefault();
   const contactEdit = contacts.find((c) => c.id === id);
 
+  contactEdit.id = id;
   contactEdit.name = document.getElementById("nameContact").value;
   contactEdit.email = document.getElementById("emailContact").value;
   contactEdit.phone = document.getElementById("phoneContact").value;
   contactEdit.emblem = renderEmblem(contactEdit.name);
-  console.log("Vor der Bearbeitung:", contactEdit);
-  console.log("Vor der Bearbeitung Profile:", profile);
   await putData(`contacts/${contactEdit.id}`, contactEdit, true);
   sortContacts();
   renderListContact();
   showDetails(contactEdit.id, "contact");
   closeDialog();
   cleanContactControls();
+}
 
-  console.log("Nach der Bearbeitung:", contactEdit);
-  console.log("Nach der Bearbeitung Profile:", profile);
+/**
+ * Edits the current user's information.
+ * @param {Event} event - The form event.
+ * @return {Promise<void>} A promise that resolves when the user is successfully edited and the UI is updated.
+ */
+async function editProfile(event) {
+  event.preventDefault();
+
+  const updatedUser = {
+    id: profile.id,
+    username: document.getElementById("nameProfile").value,
+    email: document.getElementById("emailProfile").value,
+    phone: document.getElementById("phoneProfile").value,
+    emblem: renderEmblem(document.getElementById("nameProfile").value)
+  };
+
+  try {
+    await putData(`user`, updatedUser, true); // Pfad angepasst für den aktuellen User
+    sortContacts();
+    await loggedUser();
+    showDetails(profile.id, "profile");
+    closeDialog();
+  } catch (error) {
+    console.error("Fehler beim Bearbeiten des Benutzers:", error);
+  }
 }
 
 /**
  * Deletes the currently logged-in user from the server and redirects to the login page.
  * @return {Promise<void>} A promise that resolves when the user is deleted and the redirect is complete.
  */
-async function deleteUser(id) {
+async function deleteProfile(id) {
+  if (id !== profile.id) return;
   try {
-    if (profile.id == id) await deleteData(`users/${profile.id}`, true);
+    await deleteData(`user`, true); // Pfad angepasst für den aktuellen User
     window.location.href = "../index.html";
   } catch (error) {
-    console.error("Fehler beim Löschen des Benutzers:", error);
+    console.error("Fehler beim Löschen des Benutzers:", error);
   }
 }
 
@@ -131,7 +155,6 @@ async function deleteContact(id) {
   const contact = contacts.find((c) => c.id === id);
   try {
     await deleteData(`contacts/${contact.id}`, true);
-
     const index = contacts.findIndex((c) => c.id === id);
     if (index !== -1) contacts.splice(index, 1);
     renderListContact();
@@ -192,6 +215,8 @@ function sortContacts() {
  * @return {void}
  */
 function showDetails(id, type) {
+  let dialog = document.getElementById("divDetails");
+  dialog.classList.remove("d-none");
   removeSelectedClassFromAllContacts();
 
   if (profile.id == id && type == "profile") {

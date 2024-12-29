@@ -93,7 +93,7 @@
   overflow-x: hidden;
 }
 
-.a-z-contact-list {
+.contact-letter-header {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -104,8 +104,34 @@
   font-weight: 700;
   line-height: 24px;
   text-align: left;
-  padding: 17px 36px 17px 36px;
+  padding: 15px 24px 15px 24px;
   border-bottom: 2px solid #d1d1d1;
+}
+
+.current-user-text {
+  font-weight: bold;
+}
+
+.logged-user-container {
+  width: 95%;
+}
+
+.logged-user-container:hover {
+  cursor: pointer;
+  background-color: #e2e4e5;
+  border-radius: 10px;
+}
+
+.logged-user {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  align-self: center;
+  width: 95%;
+  height: 78px;
+  padding: 15px 24px 15px 24px;
+  gap: 35px;
 }
 
 .contact-list-container {
@@ -164,6 +190,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  width: 100%;
   margin-top: 150px;
   margin-left: 16px;
   gap: 16px;
@@ -301,14 +328,13 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.three-dots-button:hover{
+.three-dots-button:hover {
   background-color: #29abe2;
 }
 
 .three-dots-button.active {
   background-color: #29abe2;
 }
-
 
 .three-dots-button .dot {
   width: 3px;
@@ -322,7 +348,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  
+  max-width: 60%;
 }
 
 .name-contact p {
@@ -644,7 +670,6 @@
 
   .dialog {
     height: 480px;
-    margin: 5px;
   }
 
   .join-add-contact {
@@ -696,13 +721,13 @@
   }
 
   .name-contact p {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .dialog {
     flex-direction: column;
     height: max-content;
-    width: max-content;
+    width: 100%;
   }
 
   .join-add-contact {
@@ -751,7 +776,6 @@
     margin-top: 25px;
     margin-bottom: 25px;
   }
-
 }
 
 @media (max-width: 710px) {
@@ -765,7 +789,7 @@
   .mobile-returnback {
     display: flex;
   }
-  
+
   .emblem-info-container {
     justify-content: space-between;
   }
@@ -801,6 +825,10 @@
     margin-top: 15px;
   }
 
+  .name-contact p {
+    font-size: 20px;
+  }
+
   .info {
     height: 50px;
   }
@@ -820,7 +848,6 @@
     font-size: 25px;
     margin: 12px 0px 12px 0px;
   }
-
 }
 
 @media (max-width: 395px) {
@@ -843,10 +870,6 @@
 
   .contact-details-title {
     font-size: 30px;
-  }
-
-  .name-contact {
-    width: 150px;
   }
 
   .add-text {
