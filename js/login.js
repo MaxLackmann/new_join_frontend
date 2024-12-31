@@ -44,13 +44,19 @@ async function AddUser(event) {
   let password = document.getElementById("password").value;
   let confirm_password = document.getElementById("passwordConfirm").value;
 
-  let user = await createUser(username, email, phone, password, confirm_password);
-  console.log("User added:", user);
-  await postData("registration", user, false);
-  showSignUpDialog();
-  await sleep(3000);
-  cleanContactControls();
-  backToLogin();
+  try {
+    let user = await createUser(username, email, phone, password, confirm_password);
+    console.log("User added:", user);
+    // Wieder: includeToken = false, Kontext 'user'
+    await postData("registration", user, false, 'user');
+    showSignUpDialog();
+    await sleep(3000);
+    cleanContactControls();
+  } catch (error) {
+    console.error("Error adding user:", error.message);
+    return;
+  }
+  window.location.href = "../index.html";
 }
 
 /**
@@ -95,21 +101,6 @@ function showSignUpDialog() {
  */
 function showLoginDialog() {
   document.getElementById("dialogLogin").style.display = "flex";
-}
-
-/**
- * Checks if an email already exists in the users data.
- * @param {string} email - The email to check.
- * @return {Promise<boolean>} A promise that resolves to true if the email already exists, false otherwise.
- */
-async function emailExists(email) {
-  let usersJson = await loadData("users");
-  for (let key in usersJson) {
-    if (usersJson[key].email === email) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /**
@@ -167,7 +158,8 @@ async function doLogin(event) {
   let email = document.getElementById("email").value;
   let password = document.getElementById("password").value;
   try {
-    const response = await postData("login", { email, password }, false);
+    // Hier kein Token (false), dafür Kontext 'user'
+    const response = await postData("login", { email, password }, false, 'user');
     const token = response.token;
     const remember = document.getElementById("remember");
     setToken(token, remember);
@@ -177,7 +169,6 @@ async function doLogin(event) {
     window.location.href = "./templates/summary.html";
   } catch (error) {
     console.error("Login fehlgeschlagen:", error.message);
-    showLoginError(error.message);
     return false;
   }
 }

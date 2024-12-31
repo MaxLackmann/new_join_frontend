@@ -74,7 +74,8 @@ async function newContact(event) {
   };
 
   try {
-    let saveContact = await postData("contacts", newContact, true);
+    // Der 4. Parameter ('contact') gibt den Kontext für showError an
+    let saveContact = await postData("contacts", newContact, true, 'contact');
     contacts.push(saveContact);
     sortContacts();
     await renderListContact();
@@ -82,7 +83,7 @@ async function newContact(event) {
     showDetails(saveContact.id, "contact");
     cleanContactControls();
   } catch (error) {
-    showError(error);
+    console.error("Fehler beim Erstellen des Kontakts:", error);
   }
 }
 
@@ -100,15 +101,16 @@ async function editContact(event, id) {
   contactEdit.email = document.getElementById("emailContact").value;
   contactEdit.phone = document.getElementById("phoneContact").value;
   contactEdit.emblem = renderEmblem(contactEdit.name);
+  
   try {
-    await putData(`contacts/${contactEdit.id}`, contactEdit, true);
+    await putData(`contacts/${contactEdit.id}`, contactEdit, 'contact');
     sortContacts();
     renderListContact();
     showDetails(contactEdit.id, "contact");
     closeDialog();
     cleanContactControls();
   } catch (error) {
-    showError(error);
+    console.error("Fehler beim Bearbeiten des Kontakts:", error);
   }
 }
 
@@ -129,13 +131,14 @@ async function editProfile(event) {
   };
 
   try {
-    await putData(`user`, updatedUser, true); // Pfad angepasst für den aktuellen User
+    await putData(`user`, updatedUser, 'user');
     sortContacts();
+    renderListContact();
     await loggedUser();
     showDetails(profile.id, "profile");
     closeDialog();
   } catch (error) {
-    showError(error);
+    console.error("Fehler beim Bearbeiten des Kontakts:", error.message);
   }
 }
 
@@ -149,7 +152,7 @@ async function deleteProfile(id) {
     await deleteData(`user`, true); // Pfad angepasst für den aktuellen User
     window.location.href = "../index.html";
   } catch (error) {
-    console.error("Fehler beim Löschen des Benutzers:", error);
+    console.error("Fehler beim Bearbeiten des Kontakts:", error.message);
   }
 }
 
@@ -167,6 +170,7 @@ async function deleteContact(id) {
     renderListContact();
   } catch (error) {
     console.error("Fehler beim Löschen des Kontakts:", error);
+    showError(error.message); 
   }
   renderListContact();
   sortContacts();
@@ -198,9 +202,7 @@ function showError(error) {
   divError.classList.remove("d-none");
 
   divError.innerHTML = `
-    <div class="error">
       <p>${error}.</p>
-    </div
   `;
 }
 

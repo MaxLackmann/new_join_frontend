@@ -32,11 +32,11 @@ function getHeaders(includeToken = false) {
 }
 
 function logout() {
-  console.warn('Benutzer wird automatisch ausgeloggt.');
-  localStorage.removeItem('token');
-  sessionStorage.removeItem('token');
-  sessionStorage.removeItem('isGuest');
-  window.location.href = '../index.html';
+  console.warn("Benutzer wird automatisch ausgeloggt.");
+  localStorage.removeItem("token");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("isGuest");
+  window.location.href = "../index.html";
 }
 
 /**
@@ -47,9 +47,9 @@ function logout() {
 async function loadData(path = "") {
   let response = await fetch(BASE_URL + path + "/", {
     method: "GET",
-    headers: getHeaders(true),
+    headers: getHeaders(true)
   });
-    
+
   return await response.json();
 }
 
@@ -59,42 +59,31 @@ async function loadData(path = "") {
  * @param {Object} [data={}] - The data to be posted. Defaults to an empty object.
  * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
  */
-async function postData(path = "", data = {}, includeToken = true) {
+async function postData(
+  path = "",
+  data = {},
+  includeToken = true,
+  context = "general"
+) {
   try {
-      let response = await fetch(BASE_URL + path + "/", {
-          method: "POST",
-          headers: getHeaders(includeToken),
-          body: JSON.stringify(data)
-      });
+    const response = await fetch(BASE_URL + path + "/", {
+      method: "POST",
+      headers: getHeaders(includeToken),
+      body: JSON.stringify(data)
+    });
 
-      // 🛑 403 Forbidden – Benutzer automatisch ausloggen
-      if (response.status === 403) {
-          console.warn('Timeout erkannt. Benutzer wird automatisch ausgeloggt.');
-          logout();
-          return;
-      }
+    if (!response.ok) {
+      const errorDetails = await response.json().catch(() => ({}));
+      throw errorDetails; // Fehler direkt weitergeben
+    }
 
-      // 🛑 401 Unauthorized – Token ungültig
-      if (response.status === 401) {
-          console.warn('Token ungültig. Benutzer wird automatisch ausgeloggt.');
-          logout();
-          return;
-      }
-
-      if (!response.ok) {
-          throw new Error(`HTTP-Error: ${response.status}`);
-      }
-
-      return await response.json();
+    return await response.json();
   } catch (error) {
-      console.error('Fehler beim Senden der Anfrage:', error.message);
-      if (error.message.includes('401') || error.message.includes('403')) {
-          console.warn('Token ungültig oder Timeout erkannt. Benutzer wird ausgeloggt.');
-          logout();
-      }
+    console.error("Fehler beim POST-Request:", error);
+    showError(error, context); // Fehleranzeige mit passendem Kontext
+    throw error;
   }
 }
-
 
 /**
  * Deletes data from the server at the specified path.
@@ -104,38 +93,51 @@ async function postData(path = "", data = {}, includeToken = true) {
 async function deleteData(path = "") {
   let response = await fetch(BASE_URL + path + "/", {
     method: "DELETE",
-    headers: getHeaders(true),
+    headers: getHeaders(true)
   });
-  if (response.status === 204) {
-    return { success: true, message: "Erfolgreich gelöscht" };
-  }
-  if (!response.ok) {
-    const errorDetails = await response.json().catch(() => ({})); // JSON-Daten extrahieren, falls vorhanden
-    throw new Error(
-      `Fehler beim Löschen: ${response.status} ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`
-    );
+  try {
+    if (response.status === 204) {
+      return { success: true, message: "Erfolgreich gelöscht" };
+    }
+    if (!response.ok) {
+      const errorDetails = await response.json().catch(() => ({}));
+      throw new Error(
+        `Fehler beim Löschen: ${response.status} ${
+          response.statusText
+        }. Details: ${JSON.stringify(errorDetails)}`
+      );
+    }
+  } catch (error) {
+    console.error("Fehler beim Senden der Anfrage:", error.message);
   }
 }
 
 /**
- * Updates data at the specified path using the Firebase Realtime Database API.
- * @param {string} [path=''] - The path to the data in the Firebase Realtime Database. Defaults to an empty string.
- * @param {Object} [data={}] - The data to be updated. Defaults to an empty object.
- * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
+ * Updates data at the specified path.
+ * @param {string} path - The API path.
+ * @param {Object} data - The data to update.
+ * @return {Promise<Object>} - Parsed JSON response.
  */
-async function putData(path = "", data = {}) {
-  let response = await fetch(BASE_URL + path + "/", {
-    method: "PUT",
-    headers: getHeaders(true),
-    body: JSON.stringify(data)
-  });
-  console.log("direction to", BASE_URL + path + "/");
-  if (!response.ok) {
-    throw new Error(`HTTP-Error: ${response.status} ${response.statusText}`);
-  }
-  return await response.json();
-}
+async function putData(path = "", data = {}, context = "general") {
+  try {
+    const response = await fetch(BASE_URL + path + "/", {
+      method: "PUT",
+      headers: getHeaders(true),
+      body: JSON.stringify(data)
+    });
 
+    if (!response.ok) {
+      const errorDetails = await response.json().catch(() => ({}));
+      throw errorDetails; // Fehler direkt weitergeben
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Fehler beim PUT-Request:", error);
+    showError(error, context); // Fehleranzeige mit passendem Kontext
+    throw error;
+  }
+}
 
 /**
  * Partially updates data at the specified path using the Firebase Realtime Database API.
@@ -144,15 +146,21 @@ async function putData(path = "", data = {}) {
  * @return {Promise<Object>} - A promise that resolves to the parsed JSON response from the Firebase Realtime Database.
  */
 async function patchData(path = "", data = {}) {
-  let response = await fetch(BASE_URL + path + "/", {
-    method: "PATCH",
-    headers: getHeaders(true),
-    body: JSON.stringify(data)
-  });
-  console.log("direction to", BASE_URL + path + "/");
-  if (!response.ok) {
-    throw new Error(`HTTP-Error: ${response.status} ${response.statusText}`);
-  }
-  return await response.json();
-}
+  try {
+    let response = await fetch(BASE_URL + path + "/", {
+      method: "PATCH",
+      headers: getHeaders(true),
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+      const errorDetails = await response.json().catch(() => ({}));
+      throw errorDetails; // Fehler direkt weitergeben
+    }
 
+    return await response.json();
+  } catch (error) {
+    console.error("Fehler beim PUT-Request:", error);
+    showError(error, context); // Fehleranzeige mit passendem Kontext
+    throw error;
+  }
+}

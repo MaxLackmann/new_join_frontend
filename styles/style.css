@@ -45,3 +45,28 @@ h3 {
 ::-webkit-scrollbar-thumb:hover {
   background: #2a3647;
 }
+
+.error p {
+  margin: 0;
+  color: #d8000c;
+  font-size: 10px;
+}
+
+#toggleErrorDetails {
+  margin-top: 10px;
+  background: pink;
+  color: #d8000c;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#toggleErrorDetails:hover {
+  text-decoration: underline;
+}
+
+#errorDetails {
+  margin-top: 10px;
+  padding-left: 10px;
+  font-size: 10px;
+}

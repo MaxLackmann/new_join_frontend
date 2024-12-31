@@ -126,6 +126,7 @@ function renderProfileDialog(profile) {
           <input class="inputs-contact inputfield-text-style" type="text" id="nameProfile" placeholder="Username" value="${profile.username}" required />
           <input class="inputs-contact inputfield-text-style" type="email" id="emailProfile" placeholder="Email" value="${profile.email}" required />
           <input class="inputs-contact inputfield-text-style" type="tel" id="phoneProfile" placeholder="Phone" value="${profile.phone}" required />
+          <div id="divError" class="error d-none"></div>
           <div class="form-button">
             <button class="button-guest button-text-style" type="button" onclick="closeDialog()">Cancel</button>
             <button class="add-contact-button-mobile button-text-style" type="submit">Save</button>
@@ -166,6 +167,7 @@ function renderContactDialog(contact) {
           <input class="inputs-contact inputfield-text-style" type="text" id="nameContact" placeholder="name" value="${contact.name}" required />
           <input class="inputs-contact inputfield-text-style" type="email" id="emailContact" placeholder="Email" value="${contact.email}" required />
           <input class="inputs-contact inputfield-text-style" type="tel" id="phoneContact" placeholder="Phone" value="${contact.phone}" required />
+          <div id="divError" class="error d-none"></div>
           <div class="form-button">
             <button class="button-guest button-text-style" type="button" onclick="closeDialog()">Cancel</button>
             <button class="add-contact-button-mobile button-text-style" type="submit">Save</button>
@@ -194,6 +196,7 @@ function renderAddContactDialog() {
           <input class="inputs-contact inputfield-text-style" type="text" id="nameContact" placeholder="name" required />
           <input class="inputs-contact inputfield-text-style" type="email" id="emailContact" placeholder="Email" required />
           <input class="inputs-contact inputfield-text-style" type="tel" id="phoneContact" placeholder="Phone" required />
+          <div id="divError" class="error d-none"></div>
           <div class="form-button">
             <button class="button-guest button-text-style" type="button" onclick="closeDialog()">Cancel</button>
             <button class="add-contact-button-mobile button-text-style" type="submit">Save</button>

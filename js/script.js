@@ -345,3 +345,62 @@ for (let i = 0; i < 1000; i++) {
 }
 console.warn('Alle setInterval-Instanzen wurden gestoppt.');
 */
+
+/**
+ * Zeigt benutzerfreundliche Fehlermeldungen im UI an.
+ * @param {Object|string} error - Das Fehlerobjekt oder eine Fehlernachricht als String.
+ * @param {string} context - Fehlerkontext ('user', 'contact', etc.).
+ */
+function showError(error, context = 'general') {
+  const divError = document.getElementById("divError");
+  divError.classList.remove("d-none");
+  divError.innerHTML = ""; // Reset der Fehlermeldungen
+
+  console.warn("Debugging Error Object:", error, "Context:", context);
+
+  // 🔹 Direkte Fehlermeldung als String anzeigen
+  if (typeof error === "string") {
+    divError.innerHTML = `<p>${error}</p>`;
+    return;
+  }
+
+  let errorMessages = [];
+
+  // 🔹 Fehler für Benutzer (User)
+  if (context === 'user') {
+    if (error?.email) errorMessages.push(error.email[0]);
+    if (error?.username) errorMessages.push(error.username[0]);
+    if (error?.phone) errorMessages.push(error.phone[0]);
+  }
+
+  // 🔹 Fehler für Kontakt (Contact)
+  if (context === 'contact') {
+    if (error?.email) errorMessages.push(error.email[0]);
+    if (error?.name) errorMessages.push(error.name[0]);
+    if (error?.phone) errorMessages.push(error.phone[0]);
+  }
+
+  // 🔹 Allgemeine Fehler (non_field_errors)
+  if (error?.non_field_errors) {
+    errorMessages.push(error.non_field_errors[0]);
+  }
+
+  // 🔹 Detail-Fehler (z.B. Server-Fehler)
+  if (error?.detail) {
+    errorMessages.push(error.detail);
+  }
+
+  // 🔹 Anzeige von Fehlern
+  if (errorMessages.length === 1) {
+    // Ein einzelner Fehler → Direkt anzeigen
+    divError.innerHTML = `<p>*${errorMessages[0]}</p>`;
+  } else if (errorMessages.length > 1) {
+    // Mehrere Fehler → Allgemeine Nachricht + Dropdown
+    divError.innerHTML = `
+        ${errorMessages.map(msg => `<p>*${msg}</p>`).join('')}
+    `;
+  } else {
+    // Fallback
+    divError.innerHTML = `<p>Something went wrong. Please try again.</p>`;
+  }
+}

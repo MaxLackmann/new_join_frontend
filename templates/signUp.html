@@ -36,7 +36,7 @@
                     <img src="../assets/icons/mail_icon.svg" alt="">
                 </div>
                 <div class="inputs style_InputTypography1">
-                    <input type="tel" id="signupPhone"  pattern="[0-9+ ]{6,13}"
+                    <input type="tel" id="signupPhone"
                     placeholder="Phone" required>
                     <img src="../assets/icons/call_icon.svg" alt="">
                 </div>
@@ -49,9 +49,7 @@
                     placeholder="Confirm Password" onkeyup="resetError()" required>
                     <img src="../assets/icons/visibility.svg" onclick="showPasswordConf()" alt="Show Password">
                 </div>
-                <div class="confirm-error">
-                    <span id="pwErrorCheck" class="pw-error-check"></span>
-                </div>
+                <div id="divError" class="error d-none"></div>
             </div>
             <div class="box-rememberSignup style_InputTypography2">
                 <input class="checkBox" type="checkbox" id="acepptRules">
